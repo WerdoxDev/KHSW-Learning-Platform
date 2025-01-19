@@ -3,6 +3,7 @@ import "@monicon/icon-loader";
 
 declare module "@monicon/icon-loader" {
   export type MoniconIconName = 
+	| "flat-color-icons:google"
 	| "mingcute:abs-fill"
 	| "mingcute:abs-line"
 	| "mingcute:ad-circle-fill"
