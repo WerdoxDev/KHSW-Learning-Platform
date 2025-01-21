@@ -1,0 +1,13 @@
+{
+  "name": "monorepo",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.2"
+  },
+  "workspaces": ["packages/*"],
+  "trustedDependencies": [
+    "@parcel/watcher",
+    "server"
+  ]
+}

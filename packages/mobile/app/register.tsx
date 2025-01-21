@@ -1,13 +1,38 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
+import { APIPostRegisterBody } from "@khsw-learning-platform/shared";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "expo-router";
-import { useRef } from "react";
+import { fetch } from "expo/fetch";
+import { useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
 export default function Register() {
 	const usernameInputRef = useRef<TextInput | null>(null);
 	const emailInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
+
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	const mutation = useMutation({
+		mutationFn: async (data: APIPostRegisterBody) => {
+			const result = await fetch(new URL("auth/register", process.env.EXPO_PUBLIC_API_HOST).toString(), {
+				body: JSON.stringify(data),
+				method: "POST",
+			});
+			console.log(result.status);
+		},
+		onError: (error) => {
+			console.log("error", error);
+		},
+	});
+
+	function register() {
+		mutation.mutate({ username: username, password: password, email: email });
+	}
+
 	return (
 		<View className="h-full justify-center bg-gray-200">
 			<View className="mx-10 items-center justify-center">
@@ -23,6 +48,7 @@ export default function Register() {
 						placeholder="Benutzername"
 						className="w-full rounded-2xl bg-white p-5"
 						onSubmitEditing={() => emailInputRef.current?.focus()}
+						onChangeText={(text) => setUsername(text)}
 					/>
 					<TextInput
 						ref={emailInputRef}
@@ -32,10 +58,17 @@ export default function Register() {
 						placeholder="E-Mail Adresse"
 						className="w-full rounded-2xl bg-white p-5"
 						onSubmitEditing={() => passwordInputRef.current?.focus()}
+						onChangeText={(text) => setEmail(text)}
 					/>
-					<TextInput ref={passwordInputRef} secureTextEntry placeholder="Passwort" className="w-full rounded-2xl bg-white p-5" />
+					<TextInput
+						ref={passwordInputRef}
+						secureTextEntry
+						placeholder="Passwort"
+						className="w-full rounded-2xl bg-white p-5"
+						onChangeText={(text) => setPassword(text)}
+					/>
 				</View>
-				<Pressable className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
+				<Pressable onPressIn={register} className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
 					<Text className="text-center text-white">Registrieren</Text>
 				</Pressable>
 				<View className="mx-5 my-10 flex-row items-center justify-center gap-x-5">

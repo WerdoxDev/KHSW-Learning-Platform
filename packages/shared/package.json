@@ -1,0 +1,12 @@
+{
+	"name": "@khsw-learning-platform/shared",
+	"version": "1.0.0",
+	"main": "./src/index.ts",
+	"type": "module",
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"dependencies": {
+		"@sapphire/snowflake": "^3.5.5"
+	}
+}

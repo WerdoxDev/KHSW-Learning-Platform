@@ -6,12 +6,16 @@
 		},
 		{
 			"name": "server",
-			"path": "server"
+			"path": "packages/server"
 		},
 		{
 			"name": "mobile",
-			"path": "mobile"
+			"path": "packages/mobile"
 		},
+		{
+			"name": "shared",
+			"path": "packages/shared"
+		}
 	],
 	"settings": {
 		"files.exclude": {
@@ -19,8 +23,6 @@
 		},
 		"workbench.editorAssociations": {
 			"*.md": "vscode.markdown.preview.editor"
-		},
-		"deno.enable": false,
-		"typescript.tsdk": "ROOT\\node_modules\\typescript\\lib"
+		}
 	}
 }
