@@ -61,6 +61,7 @@
       "dependencies": {
         "@khsw-learning-platform/shared": "packages/shared",
         "@prisma/client": "6.2.1",
+        "jose": "^5.9.6",
         "prisma": "^6.2.1",
         "zod": "^3.24.1",
       },
@@ -1631,6 +1632,8 @@
 
     "join-component": ["join-component@1.1.0", "", {}, "sha512-bF7vcQxbODoGK1imE2P9GS9aw4zD0Sd+Hni68IMZLj7zRnquH7dXUmMw9hDI5S/Jzt7q+IyTXN0rSg2GI0IKhQ=="],
 
+    "jose": ["jose@5.9.6", "", {}, "sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ=="],
+
     "js-levenshtein": ["js-levenshtein@1.1.6", "", {}, "sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g=="],
 
     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
@@ -2153,7 +2156,7 @@
 
     "serve-static": ["serve-static@1.16.2", "", { "dependencies": { "encodeurl": "~2.0.0", "escape-html": "~1.0.3", "parseurl": "~1.3.3", "send": "0.19.0" } }, "sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw=="],
 
-    "server": ["server@workspace:packages/server", { "dependencies": { "@khsw-learning-platform/shared": "packages/shared", "@prisma/client": "6.2.1", "prisma": "^6.2.1", "zod": "^3.24.1" }, "devDependencies": { "h3": "^1.13.1", "nitropack": "latest" } }],
+    "server": ["server@workspace:packages/server", { "dependencies": { "@khsw-learning-platform/shared": "packages/shared", "@prisma/client": "6.2.1", "jose": "^5.9.6", "prisma": "^6.2.1", "zod": "^3.24.1" }, "devDependencies": { "h3": "^1.13.1", "nitropack": "latest" } }],
 
     "server-only": ["server-only@0.0.1", "", {}, "sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA=="],
 

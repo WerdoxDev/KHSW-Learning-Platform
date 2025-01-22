@@ -12,9 +12,10 @@
 		"nitropack": "latest"
 	},
 	"dependencies": {
+		"@khsw-learning-platform/shared": "workspace:*",
 		"@prisma/client": "6.2.1",
+		"jose": "^5.9.6",
 		"prisma": "^6.2.1",
-		"zod": "^3.24.1",
-		"@khsw-learning-platform/shared": "workspace:*"
+		"zod": "^3.24.1"
 	}
 }

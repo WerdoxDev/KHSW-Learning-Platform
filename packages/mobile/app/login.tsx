@@ -1,12 +1,42 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
-import { Link } from "expo-router";
-import { useRef } from "react";
+import { makeUrl } from "@/utils/utils";
+import type { APIPostLoginBody, APIPostLoginResult } from "@khsw-learning-platform/shared";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useRouter } from "expo-router";
+import { fetch } from "expo/fetch";
+import { useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
 export default function Login() {
+	const router = useRouter();
 	const loginInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
+
+	const [loginValue, setLogin] = useState("");
+	const [password, setPassword] = useState("");
+
+	const mutation = useMutation({
+		mutationFn: async (data: APIPostLoginBody) => {
+			const result = await fetch(makeUrl("/auth/login"), {
+				body: JSON.stringify(data),
+				method: "POST",
+			});
+
+			return result.ok ? ((await result.json()) as APIPostLoginResult) : undefined;
+		},
+		onSuccess(data, variables, context) {
+			if (!data) {
+				return;
+			}
+
+			router.navigate("/home");
+		},
+	});
+
+	function login() {
+		mutation.mutate({ username: loginValue, email: loginValue, password: password });
+	}
 
 	return (
 		<View className="h-full justify-center bg-gray-200">
@@ -23,10 +53,17 @@ export default function Login() {
 						placeholder="E-Mail Adresse / Benutzername"
 						className="w-full rounded-2xl bg-white p-5"
 						onSubmitEditing={() => passwordInputRef.current?.focus()}
+						onChangeText={(text) => setLogin(text)}
 					/>
-					<TextInput ref={passwordInputRef} secureTextEntry placeholder="Passwort" className="w-full rounded-2xl bg-white p-5" />
+					<TextInput
+						ref={passwordInputRef}
+						secureTextEntry
+						placeholder="Passwort"
+						className="w-full rounded-2xl bg-white p-5"
+						onChangeText={(text) => setPassword(text)}
+					/>
 				</View>
-				<Pressable className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
+				<Pressable onPressIn={login} className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
 					<Text className="text-center text-white">Anmelden</Text>
 				</Pressable>
 				<View className="mx-5 my-10 flex-row items-center justify-center gap-x-5">

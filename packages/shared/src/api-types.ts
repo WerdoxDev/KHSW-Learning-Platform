@@ -4,7 +4,7 @@ export type APIUser = {
 	id: Snowflake;
 	username: string;
 	email: string;
-	password?: string;
+	password?: string | null;
 };
 
 export type Tokens = { accessToken: string; refreshToken: string };

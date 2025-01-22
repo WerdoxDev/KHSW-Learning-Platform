@@ -1,6 +1,7 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
-import { APIPostRegisterBody } from "@khsw-learning-platform/shared";
+import { makeUrl } from "@/utils/utils";
+import type { APIPostRegisterBody } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import { fetch } from "expo/fetch";
@@ -18,14 +19,11 @@ export default function Register() {
 
 	const mutation = useMutation({
 		mutationFn: async (data: APIPostRegisterBody) => {
-			const result = await fetch(new URL("auth/register", process.env.EXPO_PUBLIC_API_HOST).toString(), {
+			const result = await fetch(makeUrl("auth/register"), {
 				body: JSON.stringify(data),
 				method: "POST",
 			});
 			console.log(result.status);
-		},
-		onError: (error) => {
-			console.log("error", error);
 		},
 	});
 
@@ -68,7 +66,7 @@ export default function Register() {
 						onChangeText={(text) => setPassword(text)}
 					/>
 				</View>
-				<Pressable onPressIn={register} className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
+				<Pressable onPress={register} className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
 					<Text className="text-center text-white">Registrieren</Text>
 				</Pressable>
 				<View className="mx-5 my-10 flex-row items-center justify-center gap-x-5">

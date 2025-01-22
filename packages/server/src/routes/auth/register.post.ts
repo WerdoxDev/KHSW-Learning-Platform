@@ -1,7 +1,8 @@
-import { constants, WorkerID, snowflake } from "@khsw-learning-platform/shared";
+import { constants, type APIPostRegisterResult, WorkerID, snowflake } from "@khsw-learning-platform/shared";
 import { z } from "zod";
 import { createCustomError } from "~/utils/errors";
 import { prisma } from "~~/prisma/database";
+import { idFix } from "~~/prisma/utils";
 
 const schema = z.object({
 	username: z
@@ -9,11 +10,10 @@ const schema = z.object({
 		.min(4, { message: "Username must be atleast 4 characters" })
 		.max(20, { message: "Username must be atmost 20 characters" }),
 	email: z.string({ required_error: "Email is required" }).nonempty({ message: "Email is required" }),
-	password: z.string({ required_error: "Password is required" }).min(1),
+	password: z.string({ required_error: "Password is required" }).min(4, { message: "Password must be atleast 4 characters" }),
 });
 
 export default defineEventHandler(async (event) => {
-	setResponseStatus(event, 400);
 	const body = await useValidatedBody(schema);
 	body.username = body.username.toLowerCase();
 
@@ -29,5 +29,15 @@ export default defineEventHandler(async (event) => {
 		return createCustomError("email_exists");
 	}
 
-	await prisma.user.create({ data: { id: snowflake.generate(WorkerID.AUTH), email: body.email, username: body.username, password: body.password } });
+	const user = idFix(
+		await prisma.user.create({
+			data: { id: snowflake.generate(WorkerID.AUTH), email: body.email, username: body.username, password: body.password },
+		}),
+	);
+
+	const [accessToken, refreshToken] = await createTokens({ id: user.id });
+
+	const json: APIPostRegisterResult = { ...user, accessToken, refreshToken };
+	setResponseStatus(event, 201);
+	return json;
 });
