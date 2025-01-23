@@ -1,7 +1,8 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
+import { useModals } from "@/stores/modalsStore";
 import { makeUrl } from "@/utils/utils";
-import type { APIPostLoginBody, APIPostLoginResult } from "@khsw-learning-platform/shared";
+import type { APIPostLoginBody, ErrorObject } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import { fetch } from "expo/fetch";
@@ -10,6 +11,7 @@ import { Pressable, Text, TextInput, View } from "react-native";
 
 export default function Login() {
 	const router = useRouter();
+	const modals = useModals();
 	const loginInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
 
@@ -23,10 +25,12 @@ export default function Login() {
 				method: "POST",
 			});
 
-			return result.ok ? ((await result.json()) as APIPostLoginResult) : undefined;
+			return { result, json: await result.json() };
 		},
 		onSuccess(data, variables, context) {
-			if (!data) {
+			if (!data.result.ok) {
+				const error = data.json as ErrorObject;
+				modals.setModal("info", { isOpen: true, title: error.code, body: error.field, type: "error" });
 				return;
 			}
 
@@ -52,6 +56,7 @@ export default function Login() {
 						returnKeyType="next"
 						placeholder="E-Mail Adresse / Benutzername"
 						className="w-full rounded-2xl bg-white p-5"
+						autoCapitalize="none"
 						onSubmitEditing={() => passwordInputRef.current?.focus()}
 						onChangeText={(text) => setLogin(text)}
 					/>
@@ -59,6 +64,7 @@ export default function Login() {
 						ref={passwordInputRef}
 						secureTextEntry
 						placeholder="Passwort"
+						autoCapitalize="none"
 						className="w-full rounded-2xl bg-white p-5"
 						onChangeText={(text) => setPassword(text)}
 					/>

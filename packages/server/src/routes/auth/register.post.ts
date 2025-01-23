@@ -7,10 +7,10 @@ import { idFix } from "~~/prisma/utils";
 const schema = z.object({
 	username: z
 		.string({ required_error: "Username is required" })
-		.min(4, { message: "Username must be atleast 4 characters" })
-		.max(20, { message: "Username must be atmost 20 characters" }),
-	email: z.string({ required_error: "Email is required" }).nonempty({ message: "Email is required" }),
-	password: z.string({ required_error: "Password is required" }).min(4, { message: "Password must be atleast 4 characters" }),
+		.min(4, "Username must be atleast 4 characters")
+		.max(20, "Username must be atmost 20 characters"),
+	email: z.string({ required_error: "Email is required" }),
+	password: z.string({ required_error: "Password is required" }).min(4, "Password must be atleast 4 characters"),
 });
 
 export default defineEventHandler(async (event) => {

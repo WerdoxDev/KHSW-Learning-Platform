@@ -5,3 +5,7 @@ export const ErrorTypes = {
 	email_exists: "Email exists",
 	invalid_email: "Email is invalid",
 };
+
+export type ErrorKeys = keyof typeof ErrorTypes | (string & {});
+
+export type ErrorObject = { code: ErrorKeys; message?: string; field?: string };

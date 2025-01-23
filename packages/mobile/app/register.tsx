@@ -1,14 +1,17 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
+import { useModals } from "@/stores/modalsStore";
 import { makeUrl } from "@/utils/utils";
-import type { APIPostRegisterBody } from "@khsw-learning-platform/shared";
+import type { APIPostRegisterBody, ErrorObject } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { fetch } from "expo/fetch";
 import { useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
 export default function Register() {
+	const router = useRouter();
+	const modals = useModals();
 	const usernameInputRef = useRef<TextInput | null>(null);
 	const emailInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
@@ -23,7 +26,17 @@ export default function Register() {
 				body: JSON.stringify(data),
 				method: "POST",
 			});
-			console.log(result.status);
+
+			return { result, json: await result.json() };
+		},
+		onSuccess(data, variables, context) {
+			if (!data.result.ok) {
+				const error = data.json as ErrorObject;
+				modals.setModal("info", { isOpen: true, title: error.code, body: error.field, type: "error" });
+				return;
+			}
+
+			router.navigate("/home");
 		},
 	});
 
@@ -43,6 +56,7 @@ export default function Register() {
 						ref={usernameInputRef}
 						submitBehavior="submit"
 						returnKeyType="next"
+						autoCapitalize="none"
 						placeholder="Benutzername"
 						className="w-full rounded-2xl bg-white p-5"
 						onSubmitEditing={() => emailInputRef.current?.focus()}
@@ -51,6 +65,7 @@ export default function Register() {
 					<TextInput
 						ref={emailInputRef}
 						submitBehavior="submit"
+						autoCapitalize="none"
 						keyboardType="email-address"
 						returnKeyType="next"
 						placeholder="E-Mail Adresse"
@@ -62,6 +77,7 @@ export default function Register() {
 						ref={passwordInputRef}
 						secureTextEntry
 						placeholder="Passwort"
+						autoCapitalize="none"
 						className="w-full rounded-2xl bg-white p-5"
 						onChangeText={(text) => setPassword(text)}
 					/>

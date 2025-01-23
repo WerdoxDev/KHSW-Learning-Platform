@@ -8,8 +8,10 @@ import "react-native-reanimated";
 import "../global.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import InfoModal from "@/components/InfoModal";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { Appearance } from "react-native";
+import { useModals } from "@/stores/modalsStore";
+import { Appearance, Platform, Text, View } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -25,9 +27,11 @@ export default function RootLayout() {
 	useEffect(() => {
 		if (loaded) {
 			SplashScreen.hideAsync();
-			Appearance.setColorScheme("light");
+			if (Platform.OS !== "web") Appearance.setColorScheme("light");
 		}
 	}, [loaded]);
+
+	const modals = useModals();
 
 	if (!loaded) {
 		return null;
@@ -42,6 +46,7 @@ export default function RootLayout() {
 					<Stack.Screen name="home" options={{ headerShown: false, animation: "slide_from_bottom" }} />
 					{/* <Stack.Screen name="+not-found" /> */}
 				</Stack>
+				{modals.info.isOpen && <InfoModal />}
 				<StatusBar style="auto" />
 			</ThemeProvider>
 		</QueryClientProvider>
