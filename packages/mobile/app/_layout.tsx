@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import InfoModal from "@/components/InfoModal";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useModals } from "@/stores/modalsStore";
-import { Appearance, Platform, Text, View } from "react-native";
+import { Appearance, Platform } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,7 +26,6 @@ export default function RootLayout() {
 
 	useEffect(() => {
 		if (loaded) {
-			SplashScreen.hideAsync();
 			if (Platform.OS !== "web") Appearance.setColorScheme("light");
 		}
 	}, [loaded]);

@@ -1,8 +1,9 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
+import { useApiInitializer } from "@/hooks/useApiInitializer";
 import { useModals } from "@/stores/modalsStore";
 import { makeUrl } from "@/utils/utils";
-import type { APIPostLoginBody, ErrorObject } from "@khsw-learning-platform/shared";
+import type { APIPostLoginBody, APIPostLoginResult, ErrorObject } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import { fetch } from "expo/fetch";
@@ -12,6 +13,7 @@ import { Pressable, Text, TextInput, View } from "react-native";
 export default function Login() {
 	const router = useRouter();
 	const modals = useModals();
+	const { initializeWithResult } = useApiInitializer();
 	const loginInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
 
@@ -27,12 +29,15 @@ export default function Login() {
 
 			return { result, json: await result.json() };
 		},
-		onSuccess(data, variables, context) {
+		async onSuccess(data, variables, context) {
 			if (!data.result.ok) {
 				const error = data.json as ErrorObject;
 				modals.setModal("info", { isOpen: true, title: error.code, body: error.field, type: "error" });
 				return;
 			}
+
+			const result = data.json as APIPostLoginResult;
+			await initializeWithResult(result);
 
 			router.navigate("/home");
 		},

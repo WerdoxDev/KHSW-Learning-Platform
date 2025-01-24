@@ -17,11 +17,11 @@ export default function InfoModal() {
 	};
 
 	const bodyErrorMap: Record<ErrorKeys, string> = {
-		invalid_body: "Please fill all the required fields",
+		invalid_body: "",
 		invalid_credentials: "Die eingegebenen Anmeldeinformationen sind nicht gültig",
-		username_exists: "der eingegebene Benutzername existiert schon",
-		email_exists: "die eingegebene E-Mail Adresse existiert schon",
-		invalid_email: "die eingegebene E-Mail Adresse ist ungültig",
+		username_exists: "Der eingegebene Benutzername existiert schon",
+		email_exists: "Die eingegebene E-Mail Adresse existiert schon",
+		invalid_email: "Die eingegebene E-Mail Adresse ist ungültig",
 	};
 
 	function getBodyFieldError() {

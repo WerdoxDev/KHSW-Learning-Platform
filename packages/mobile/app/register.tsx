@@ -1,8 +1,9 @@
 import OAuthButton from "@/components/OAuthButton";
 import { custom } from "@/constants/styles";
+import { useApiInitializer } from "@/hooks/useApiInitializer";
 import { useModals } from "@/stores/modalsStore";
 import { makeUrl } from "@/utils/utils";
-import type { APIPostRegisterBody, ErrorObject } from "@khsw-learning-platform/shared";
+import type { APIPostRegisterBody, APIPostRegisterResult, ErrorObject } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import { fetch } from "expo/fetch";
@@ -12,6 +13,7 @@ import { Pressable, Text, TextInput, View } from "react-native";
 export default function Register() {
 	const router = useRouter();
 	const modals = useModals();
+	const { initializeWithResult } = useApiInitializer();
 	const usernameInputRef = useRef<TextInput | null>(null);
 	const emailInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
@@ -29,12 +31,15 @@ export default function Register() {
 
 			return { result, json: await result.json() };
 		},
-		onSuccess(data, variables, context) {
+		async onSuccess(data, variables, context) {
 			if (!data.result.ok) {
 				const error = data.json as ErrorObject;
 				modals.setModal("info", { isOpen: true, title: error.code, body: error.field, type: "error" });
 				return;
 			}
+
+			const result = data.json as APIPostRegisterResult;
+			await initializeWithResult(result);
 
 			router.navigate("/home");
 		},
