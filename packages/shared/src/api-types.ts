@@ -23,3 +23,6 @@ export type APIPostRegisterBody = {
 
 export type APIPostLoginResult = APIUser & Tokens;
 export type APIPostRegisterResult = APIUser & Tokens;
+
+export type APIPostRefreshTokenResult = Tokens;
+export type APIGetCurrentUserResult = APIUser;

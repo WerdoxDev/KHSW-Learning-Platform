@@ -27,7 +27,7 @@ export async function verifyToken(token: string, secret: Uint8Array = ACCESS_TOK
 
 		const jwt = await jose.jwtVerify<{ id: Snowflake }>(token, secret);
 
-		if (!("id" in jwt.payload) && !("providerId" in jwt.payload)) {
+		if (!("id" in jwt.payload)) {
 			return { valid: false, payload: null };
 		}
 

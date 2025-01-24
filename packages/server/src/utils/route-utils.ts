@@ -1,6 +1,7 @@
 import { type H3Event, createError, getQuery, getRouterParams, readBody } from "h3";
 import { ZodError, type z } from "zod";
-import { createCustomError } from "./errors";
+import { createCustomError, unauthorized } from "./errors";
+import { prisma } from "~~/prisma/database";
 
 export enum HttpCode {
 	OK = 200,
@@ -53,6 +54,29 @@ export async function useValidatedQuery<T extends z.ZodTypeAny>(event: H3Event, 
 	} catch (e) {
 		throw createError({ statusCode: 404 });
 	}
+}
+
+export async function useVerifiedJwt() {
+   const event = useEvent();
+	const bearer = getHeader(event, "Authorization");
+
+	if (!bearer) {
+		throw unauthorized();
+	}
+
+	const token = bearer.split(" ")[1];
+
+	const { valid, payload } = await verifyToken(token);
+
+	if (!valid || !payload) {
+		throw unauthorized();
+	}
+
+	if (!(await prisma.user.exists({ id: BigInt(payload.id) }))) {
+		throw unauthorized();
+	}
+
+	return { payload, token };
 }
 
 export async function catchError<T>(fn: (() => Promise<T>) | (() => T)): Promise<[Error, null] | [null, T]> {

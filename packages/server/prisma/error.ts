@@ -1,3 +1,4 @@
+import type { Snowflake } from "@khsw-learning-platform/shared";
 import { H3Error } from "h3";
 
 export enum DBErrorType {
@@ -27,6 +28,19 @@ export function isDBError(object: unknown): object is DBError {
 	}
 
 	return false;
+}
+
+export function assertId(methodName: string, ...ids: (Snowflake | undefined)[]) {
+	let lastValidIndex = -1;
+	try {
+		for (const [i, id] of ids.entries()) {
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			BigInt(id!);
+			lastValidIndex = i;
+		}
+	} catch (e) {
+		throw createError({ cause: new DBError(methodName, DBErrorType.INVALID_ID, ids[lastValidIndex + 1]) });
+	}
 }
 
 export function assertObj(methodName: string, obj: unknown, errorType: DBErrorType, cause?: string) {

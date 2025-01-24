@@ -11,3 +11,5 @@ export class TokenInvalidator {
 		return this.invalidTokens.includes(token);
 	}
 }
+
+export const tokenInvalidator = new TokenInvalidator();
