@@ -39,7 +39,7 @@ export default function Login() {
 			const result = data.json as APIPostLoginResult;
 			await initializeWithResult(result);
 
-			router.navigate("/home");
+			router.navigate("/(tabs)");
 		},
 	});
 

@@ -42,7 +42,8 @@ export default function RootLayout() {
 				<Stack>
 					<Stack.Screen name="login" options={{ headerShown: false, animation: "slide_from_left" }} />
 					<Stack.Screen name="register" options={{ headerShown: false, animation: "slide_from_right" }} />
-					<Stack.Screen name="home" options={{ headerShown: false, animation: "slide_from_bottom" }} />
+					{/* <Stack.Screen name="home" options={{ headerShown: false, animation: "slide_from_bottom" }} /> */}
+					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 					{/* <Stack.Screen name="+not-found" /> */}
 				</Stack>
 				{modals.info.isOpen && <InfoModal />}

@@ -41,7 +41,7 @@ export default function Register() {
 			const result = data.json as APIPostRegisterResult;
 			await initializeWithResult(result);
 
-			router.navigate("/home");
+			router.navigate("/(tabs)");
 		},
 	});
 

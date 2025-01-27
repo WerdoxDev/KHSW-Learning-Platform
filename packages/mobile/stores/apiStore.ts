@@ -21,6 +21,11 @@ const store = createStore(
 					await SecureStore.setItemAsync("refreshToken", refreshToken);
 				}
 			},
+			resetTokens: async () => {
+				set({ accessToken: null, refreshToken: null });
+				await SecureStore.deleteItemAsync("accessToken");
+				await SecureStore.deleteItemAsync("refreshToken");
+			},
 			setUser: (user: APIUser) => {
 				set({ user });
 			},
