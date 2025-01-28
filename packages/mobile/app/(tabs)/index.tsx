@@ -1,10 +1,24 @@
+import Course from "@/components/Course";
 import { useApi } from "@/stores/apiStore";
+import { authHeader, makeUrl } from "@/utils/utils";
+import type { APIGetCoursesResult } from "@khsw-learning-platform/shared";
 import Monicon from "@monicon/native";
+import { useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
-import { DevSettings, Pressable, Text, TextInput, View } from "react-native";
+import { fetch } from "expo/fetch";
+import { DevSettings, FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 export default function Home() {
 	const api = useApi();
+
+	const { data, isLoading } = useQuery({
+		queryKey: ["courses"],
+		queryFn: async () => {
+			if (!api.accessToken) return null;
+
+			return (await (await fetch(makeUrl("/courses"), { method: "GET", headers: authHeader(api.accessToken) })).json()) as APIGetCoursesResult;
+		},
+	});
 
 	async function reset() {
 		await SecureStore.deleteItemAsync("accessToken");
@@ -27,12 +41,12 @@ export default function Home() {
 					<TextInput placeholder="Suche" placeholderClassName="#9ca3af" className="ml-2 w-full shrink text-lg leading-7" cursorColor="black" />
 				</View>
 			</View>
-			<View className="mt-10">
-				<View className="mx-5 rounded-3xl bg-white p-2 pb-0 shadow-2xl">
-					<View className="h-48 w-full rounded-2xl bg-slate-600" />
-					<Text className="my-5 ml-5 font-bold text-xl">Website Design</Text>
-				</View>
-			</View>
+			{isLoading && <Text className="mt-10 w-full text-center font-bold text-xl">Loading...</Text>}
+			<FlatList
+				data={data}
+				renderItem={({ item }) => <Course id={item.id} name={item.name} imageUrl={item.imageUrl} author={item.author} />}
+				keyExtractor={(item) => item.id}
+			/>
 		</View>
 	);
 }

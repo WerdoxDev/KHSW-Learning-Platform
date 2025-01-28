@@ -11,11 +11,9 @@ export default function Profile() {
 	const router = useRouter();
 	const mutation = useMutation({
 		mutationFn: async () => {
-			console.log("HI?");
 			if (!api.accessToken) return;
 
 			await fetch(makeUrl("/auth/logout"), { method: "POST", body: "", headers: authHeader(api.accessToken) });
-			console.log("YAY!");
 			await api.resetTokens();
 		},
 		onError: (error) => {
