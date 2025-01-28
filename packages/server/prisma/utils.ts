@@ -5,6 +5,20 @@ export const selectPrivateUser = Prisma.validator<Prisma.UserSelect>()({
 	username: true,
 	email: true,
 	password: true,
+	permissions: true,
+});
+
+export const selectPublicUser = Prisma.validator<Prisma.UserSelect>()({
+	id: true,
+	username: true,
+});
+
+export const selectDefaultCourse = Prisma.validator<Prisma.CourseSelect>()({
+	id: true,
+	name: true,
+	author: { select: selectPublicUser },
+	authorId: false,
+	imageUrl: true,
 });
 
 type BigIntToString<T> = T extends bigint

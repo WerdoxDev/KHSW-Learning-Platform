@@ -1,5 +1,4 @@
-import { ErrorTypes, type ErrorObject } from "@khsw-learning-platform/shared";
-import type { H3Event } from "h3";
+import { type ErrorObject, ErrorTypes } from "@khsw-learning-platform/shared";
 
 export function createCustomError(code: keyof typeof ErrorTypes | (string & {}), message?: string, field?: string, status = 400) {
 	const event = useEvent();
@@ -15,7 +14,7 @@ export function invalidBody(): ErrorObject {
 }
 
 export function unauthorized(): ErrorObject {
-   const event = useEvent();
-   setResponseStatus(event, 401);
-   return {code: "unauthorized", message:"Unauthorized", status: 401};
+	const event = useEvent();
+	setResponseStatus(event, 401);
+	return { code: "unauthorized", message: "Unauthorized", status: 401 };
 }

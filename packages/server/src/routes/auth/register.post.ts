@@ -15,7 +15,6 @@ const schema = z.object({
 
 export default defineEventHandler(async (event) => {
 	const body = await useValidatedBody(schema);
-	body.username = body.username.toLowerCase();
 
 	if (await prisma.user.exists({ username: body.username })) {
 		return createCustomError("username_exists");
@@ -29,11 +28,7 @@ export default defineEventHandler(async (event) => {
 		return createCustomError("email_exists");
 	}
 
-	const user = idFix(
-		await prisma.user.create({
-			data: { id: snowflake.generate(WorkerID.AUTH), email: body.email, username: body.username, password: body.password },
-		}),
-	);
+	const user = idFix(await prisma.user.createUser(body.username, body.email, body.password));
 
 	const [accessToken, refreshToken] = await createTokens({ id: user.id });
 

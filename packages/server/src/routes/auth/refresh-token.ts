@@ -15,9 +15,9 @@ export default defineEventHandler(async (event) => {
 		throw unauthorized();
 	}
 
-	const user = idFix(await prisma.user.getById(payload.id, { select: { id: true } }));
+	const user = idFix(await prisma.user.getById(payload.id, { select: { id: true, permissions: true } }));
 
-	const [accessToken, refreshToken] = await createTokens({ id: user.id });
+	const [accessToken, refreshToken] = await createTokens({ id: user.id, permissions: user.permissions });
 
 	const json: APIPostRefreshTokenResult = { accessToken, refreshToken };
 	setResponseStatus(event, HttpCode.OK);

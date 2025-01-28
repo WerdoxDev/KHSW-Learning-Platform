@@ -1,7 +1,9 @@
+import type { TokenPayload } from "@khsw-learning-platform/shared";
 import { type H3Event, createError, getQuery, getRouterParams, readBody } from "h3";
 import { ZodError, type z } from "zod";
-import { createCustomError, unauthorized } from "./errors";
 import { prisma } from "~~/prisma/database";
+import { createCustomError, unauthorized } from "./errors";
+import { hasPermission } from "./permission";
 
 export enum HttpCode {
 	OK = 200,
@@ -57,7 +59,7 @@ export async function useValidatedQuery<T extends z.ZodTypeAny>(event: H3Event, 
 }
 
 export async function useVerifiedJwt() {
-   const event = useEvent();
+	const event = useEvent();
 	const bearer = getHeader(event, "Authorization");
 
 	if (!bearer) {
@@ -77,6 +79,14 @@ export async function useVerifiedJwt() {
 	}
 
 	return { payload, token };
+}
+
+export function useCheckPermission(tokenPayload: TokenPayload, permission: number) {
+	const valid = hasPermission(tokenPayload.permissions, permission);
+
+	if (!valid) {
+		throw unauthorized();
+	}
 }
 
 export async function catchError<T>(fn: (() => Promise<T>) | (() => T)): Promise<[Error, null] | [null, T]> {

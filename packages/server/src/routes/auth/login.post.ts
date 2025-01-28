@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 	}
 	if (error) throw error;
 
-	const [accessToken, refreshToken] = await createTokens({ id: user.id });
+	const [accessToken, refreshToken] = await createTokens({ id: user.id, permissions: user.permissions });
 
 	const json: APIPostLoginResult = { ...user, accessToken: accessToken, refreshToken: refreshToken };
 	setResponseStatus(event, HttpCode.OK);

@@ -14,8 +14,18 @@ datasource db {
 }
 
 model User {
-   id       BigInt  @id
-   username String  @unique
-   email    String  @unique
-   password String?
+   id           BigInt   @id
+   username     String   @unique
+   email        String   @unique
+   password     String?
+   permissions  Int
+   ownedCourses Course[]
+}
+
+model Course {
+   id       BigInt @id
+   name     String @unique
+   author   User   @relation(fields: [authorId], references: [id])
+   authorId BigInt
+   imageUrl String
 }
