@@ -5,7 +5,12 @@ import { HttpCode, useCheckPermission } from "~/utils/route-utils";
 import { prisma } from "~~/prisma/database";
 import { idFix, selectDefaultCourse } from "~~/prisma/utils";
 
-const schema = z.object({ name: z.string().nonempty(), imageUrl: z.string() });
+const schema = z.object({
+	name: z.string().nonempty(),
+	imageUrl: z.string(),
+	description: z.string(),
+	skills: z.array(z.string()),
+});
 
 export default defineEventHandler(async (event) => {
 	const { payload } = await useVerifiedJwt();
@@ -13,7 +18,16 @@ export default defineEventHandler(async (event) => {
 
 	const body = await useValidatedBody(schema);
 
-	const course: APIPostCourseResult = idFix(await prisma.course.createCourse(body.name, payload.id, "", { select: selectDefaultCourse }));
+	if (await prisma.course.exists({ name: body.name })) {
+		return createCustomError("course_name_exists");
+	}
+
+	const course: APIPostCourseResult = idFix(
+		await prisma.course.createCourse(body.name, body.description, payload.id, body.imageUrl, body.skills, {
+			select: selectDefaultCourse,
+		}),
+	);
+
 	setResponseStatus(event, HttpCode.CREATED);
 	return course;
 });

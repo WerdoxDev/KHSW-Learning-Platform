@@ -1,4 +1,4 @@
-import { constants, type APIPostRegisterResult, WorkerID, snowflake } from "@khsw-learning-platform/shared";
+import { constants, type APIPostRegisterResult } from "@khsw-learning-platform/shared";
 import { z } from "zod";
 import { createCustomError } from "~/utils/errors";
 import { prisma } from "~~/prisma/database";

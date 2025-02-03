@@ -1,6 +1,6 @@
 import { type APIPostLoginBody, type Snowflake, WorkerID, snowflake } from "@khsw-learning-platform/shared";
 import { Prisma } from "@prisma/client";
-import { permissions } from "~/utils/permission";
+import { permissions } from "../src/utils/permission";
 import { prisma } from "./database";
 import { DBErrorType, assertId, assertObj } from "./error";
 import { selectPrivateUser } from "./utils";

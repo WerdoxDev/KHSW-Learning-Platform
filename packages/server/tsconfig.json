@@ -1,4 +1,11 @@
 // https://nitro.unjs.io/guide/typescript
 {
-	"extends": ["./.nitro/types/tsconfig.json", "../../tsconfig.json"]
+	"extends": ["./.nitro/types/tsconfig.json", "../../tsconfig.json"],
+	"paths": {
+		"#imports": ["./nitro-imports"],
+		"~/*": ["../../src/*"],
+		"@/*": ["../../src/*"],
+		"~~/*": ["../../*"],
+		"@@/*": ["../../*"]
+	}
 }

@@ -1,9 +1,13 @@
 import type { Snowflake } from "@khsw-learning-platform/shared";
 import { H3Error } from "h3";
+import { prisma } from "./database";
 
 export enum DBErrorType {
 	INVALID_ID = "INVALID_ID",
 	NULL_USER = "NULL_USER",
+	NULL_COURSE = "NULL_COURSE",
+	NULL_CHAPTER = "NULL_CHAPTER",
+	NULL_CONTENT = "NULL_CONTENT",
 }
 
 export class DBError extends Error {
@@ -43,9 +47,32 @@ export function assertId(methodName: string, ...ids: (Snowflake | undefined)[]) 
 	}
 }
 
+export function assertCondition(methodName: string, shouldAssert: boolean, errorType: DBErrorType, cause?: string) {
+	if (shouldAssert) {
+		throw createError({ cause: new DBError(methodName, errorType, cause) });
+	}
+}
+
 export function assertObj(methodName: string, obj: unknown, errorType: DBErrorType, cause?: string) {
 	if (obj === null || typeof obj !== "object") {
 		throw createError({ cause: new DBError(methodName, errorType, cause) });
+	}
+}
+
+export async function assertExists(
+	error: unknown,
+	methodName: string,
+	errorType: DBErrorType,
+	ids: (Snowflake | undefined)[] | { userId: Snowflake; channelId: Snowflake }[],
+) {
+	const normalIds = ids as Snowflake[];
+
+	if (errorType === DBErrorType.NULL_USER) {
+		await prisma.user.assertUsersExist(methodName, normalIds);
+	} else if (errorType === DBErrorType.NULL_COURSE) {
+		await prisma.course.assertCourseExists(methodName, normalIds);
+	} else if (errorType === DBErrorType.NULL_CHAPTER) {
+		await prisma.chapter.assertChapterExists(methodName, normalIds);
 	}
 }
 

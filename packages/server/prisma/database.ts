@@ -1,4 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { assertExtension } from "./assert";
+import { chapterExtension } from "./chapter";
+import { contentExtension } from "./content";
 import { courseExtension } from "./course";
 import { userExtension } from "./user";
 
@@ -16,5 +19,8 @@ export const prisma = new PrismaClient()
 			},
 		},
 	})
+	.$extends(assertExtension)
 	.$extends(userExtension)
-	.$extends(courseExtension);
+	.$extends(courseExtension)
+	.$extends(chapterExtension)
+	.$extends(contentExtension);

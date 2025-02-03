@@ -13,12 +13,29 @@ export const selectPublicUser = Prisma.validator<Prisma.UserSelect>()({
 	username: true,
 });
 
+export const selectDefaultChapter = Prisma.validator<Prisma.ChapterSelect>()({
+	id: true,
+	name: true,
+	order: true,
+	courseId: true,
+});
+
+export const selectDefaultContent = Prisma.validator<Prisma.ContentSelect>()({
+	id: true,
+	name: true,
+	type: true,
+	chapterId: true,
+});
+
 export const selectDefaultCourse = Prisma.validator<Prisma.CourseSelect>()({
 	id: true,
 	name: true,
 	author: { select: selectPublicUser },
 	authorId: false,
 	imageUrl: true,
+	description: true,
+	chapters: { select: { id: true, order: true, name: true, contents: { select: { id: true, name: true, type: true } } } },
+	skills: { select: { name: true } },
 });
 
 type BigIntToString<T> = T extends bigint

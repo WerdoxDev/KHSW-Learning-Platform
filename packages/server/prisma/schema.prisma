@@ -23,9 +23,37 @@ model User {
 }
 
 model Course {
-   id       BigInt @id
-   name     String @unique
-   author   User   @relation(fields: [authorId], references: [id])
-   authorId BigInt
-   imageUrl String
+   id          BigInt    @id
+   name        String    @unique
+   author      User      @relation(fields: [authorId], references: [id])
+   authorId    BigInt
+   imageUrl    String
+   description String
+   chapters    Chapter[]
+   skills      Skill[]
+}
+
+model Chapter {
+   id       BigInt    @id
+   name     String
+   order    Int
+   course   Course    @relation(fields: [courseId], references: [id])
+   courseId BigInt
+   contents Content[]
+}
+
+model Content {
+   id        BigInt  @id
+   type      Int
+   name      String
+   chapter   Chapter @relation(fields: [chapterId], references: [id])
+   chapterId BigInt
+}
+
+model Skill {
+   id               BigInt   @id
+   name             String   @unique
+   connectedCourses Course[]
+
+   @@index([name])
 }
