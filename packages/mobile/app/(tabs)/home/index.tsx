@@ -35,18 +35,21 @@ export default function Home() {
 					<Text>Test Reset</Text>
 				</Pressable>
 			</View>
-			<View className="mx-10 mt-5">
+			<View className="mx-10 my-5">
 				<View className="flex-row items-center rounded-3xl border border-gray-400 px-4 py-2">
 					<Monicon name="mingcute:search-line" size={32} color="#9ca3af" />
 					<TextInput placeholder="Suche" placeholderClassName="#9ca3af" className="ml-2 w-full shrink text-lg leading-7" cursorColor="black" />
 				</View>
 			</View>
 			{isLoading && <Text className="mt-10 w-full text-center font-bold text-xl">Loading...</Text>}
-			<FlatList
-				data={data}
-				renderItem={({ item }) => <Course id={item.id} name={item.name} imageUrl={item.imageUrl} author={item.author} />}
-				keyExtractor={(item) => item.id}
-			/>
+			<View className="shrink">
+				<FlatList
+					contentContainerClassName="pb-10"
+					data={data}
+					renderItem={({ item }) => <Course id={item.id} name={item.name} imageUrl={item.imageUrl} author={item.author} />}
+					keyExtractor={(item) => item.id}
+				/>
+			</View>
 		</View>
 	);
 }

@@ -3,26 +3,28 @@ import { custom } from "@/constants/styles";
 import { useApiInitializer } from "@/hooks/useApiInitializer";
 import { useModals } from "@/stores/modalsStore";
 import { makeUrl } from "@/utils/utils";
-import type { APIPostLoginBody, APIPostLoginResult, ErrorObject } from "@khsw-learning-platform/shared";
+import type { APIPostRegisterBody, APIPostRegisterResult, ErrorObject } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import { fetch } from "expo/fetch";
 import { useRef, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 
-export default function Login() {
+export default function Register() {
 	const router = useRouter();
 	const modals = useModals();
 	const { initializeWithResult } = useApiInitializer();
-	const loginInputRef = useRef<TextInput | null>(null);
+	const usernameInputRef = useRef<TextInput | null>(null);
+	const emailInputRef = useRef<TextInput | null>(null);
 	const passwordInputRef = useRef<TextInput | null>(null);
 
-	const [loginValue, setLogin] = useState("");
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
 	const mutation = useMutation({
-		mutationFn: async (data: APIPostLoginBody) => {
-			const result = await fetch(makeUrl("/auth/login"), {
+		mutationFn: async (data: APIPostRegisterBody) => {
+			const result = await fetch(makeUrl("auth/register"), {
 				body: JSON.stringify(data),
 				method: "POST",
 			});
@@ -36,34 +38,45 @@ export default function Login() {
 				return;
 			}
 
-			const result = data.json as APIPostLoginResult;
+			const result = data.json as APIPostRegisterResult;
 			await initializeWithResult(result);
 
-			router.navigate("/(tabs)");
+			router.navigate("/(tabs)/home");
 		},
 	});
 
-	function login() {
-		mutation.mutate({ username: loginValue, email: loginValue, password: password });
+	function register() {
+		mutation.mutate({ username: username, password: password, email: email });
 	}
 
 	return (
 		<View className="h-full justify-center bg-gray-200">
 			<View className="mx-10 items-center justify-center">
 				<View className="mb-10">
-					<Text className="mb-2 text-center font-bold text-5xl">Nochmals Hallo!</Text>
-					<Text className="text-center text-2xl">Wir freuen uns, Sie auf der KHSW-Lernplattform wiederzusehen!</Text>
+					<Text className="mb-2 text-center font-bold text-5xl">Hallo!</Text>
+					<Text className="text-center text-2xl">Willkomen auf der KHSW-Lernplattform!</Text>
 				</View>
 				<View className="mb-10 w-full gap-y-4">
 					<TextInput
-						ref={loginInputRef}
+						ref={usernameInputRef}
 						submitBehavior="submit"
 						returnKeyType="next"
-						placeholder="E-Mail Adresse / Benutzername"
-						className="w-full rounded-2xl bg-white p-5"
 						autoCapitalize="none"
+						placeholder="Benutzername"
+						className="w-full rounded-2xl bg-white p-5"
+						onSubmitEditing={() => emailInputRef.current?.focus()}
+						onChangeText={(text) => setUsername(text)}
+					/>
+					<TextInput
+						ref={emailInputRef}
+						submitBehavior="submit"
+						autoCapitalize="none"
+						keyboardType="email-address"
+						returnKeyType="next"
+						placeholder="E-Mail Adresse"
+						className="w-full rounded-2xl bg-white p-5"
 						onSubmitEditing={() => passwordInputRef.current?.focus()}
-						onChangeText={(text) => setLogin(text)}
+						onChangeText={(text) => setEmail(text)}
 					/>
 					<TextInput
 						ref={passwordInputRef}
@@ -74,8 +87,8 @@ export default function Login() {
 						onChangeText={(text) => setPassword(text)}
 					/>
 				</View>
-				<Pressable onPressIn={login} className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
-					<Text className="text-center text-white">Anmelden</Text>
+				<Pressable onPress={register} className="w-full rounded-2xl bg-rose-500 px-5 py-5 active:opacity-50" style={custom.authButtonShadow}>
+					<Text className="text-center text-white">Registrieren</Text>
 				</Pressable>
 				<View className="mx-5 my-10 flex-row items-center justify-center gap-x-5">
 					<View className="h-0.5 w-full shrink bg-gray-500 " />
@@ -87,10 +100,10 @@ export default function Login() {
 				</View>
 			</View>
 			<View className="absolute inset-x-0 bottom-16 flex-row justify-center">
-				<Text>Sie sind noch kein Mitglied?</Text>
-				<Link className="text-blue-600" href="/register">
+				<Text>Sie sind schon Mitglied?</Text>
+				<Link className="text-blue-600" href="/login">
 					{" "}
-					Jetzt registrieren!
+					Jetzt anmelden!
 				</Link>
 			</View>
 		</View>

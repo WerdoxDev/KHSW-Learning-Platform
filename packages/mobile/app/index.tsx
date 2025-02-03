@@ -11,7 +11,7 @@ export default function Index() {
 		async function initialize() {
 			const result = await initializeWithToken();
 			if (result) {
-				router.navigate("/(tabs)");
+				router.navigate("/home");
 			} else {
 				router.navigate("/login");
 			}

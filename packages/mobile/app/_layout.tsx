@@ -39,11 +39,12 @@ export default function RootLayout() {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<ThemeProvider value={colorScheme === "light" ? DefaultTheme : DarkTheme}>
-				<Stack>
-					<Stack.Screen name="login" options={{ headerShown: false, animation: "slide_from_left" }} />
-					<Stack.Screen name="register" options={{ headerShown: false, animation: "slide_from_right" }} />
+				<Stack screenOptions={{ headerShown: false }}>
+					<Stack.Screen name="(auth)/login" options={{ headerShown: false, animation: "slide_from_left", presentation: "modal" }} />
+					<Stack.Screen name="(auth)/register" options={{ headerShown: false, animation: "slide_from_right", presentation: "modal" }} />
 					{/* <Stack.Screen name="home" options={{ headerShown: false, animation: "slide_from_bottom" }} /> */}
 					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+					{/* <Stack.Screen name="course-view" options={{ headerShown: false, animation: "fade_from_bottom" }} /> */}
 					{/* <Stack.Screen name="+not-found" /> */}
 				</Stack>
 				{modals.info.isOpen && <InfoModal />}
