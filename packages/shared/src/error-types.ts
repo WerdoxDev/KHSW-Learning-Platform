@@ -4,9 +4,10 @@ export const ErrorTypes = {
 	username_exists: "Username exists",
 	email_exists: "Email exists",
 	invalid_email: "Email is invalid",
-   unauthorized: "Unauthorized"
+	unauthorized: "Unauthorized",
+	course_name_exists: "Course name exists",
 };
 
 export type ErrorKeys = keyof typeof ErrorTypes | (string & {});
 
-export type ErrorObject = { code: ErrorKeys; message?: string; field?: string, status?: number };
+export type ErrorObject = { code: ErrorKeys; message?: string; field?: string; status?: number };

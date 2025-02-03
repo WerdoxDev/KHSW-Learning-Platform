@@ -46,3 +46,36 @@ export type APIPostCourseBody = {
 };
 
 export type APIGetCoursesResult = APICourse[];
+
+export type APIChapter = {
+	id: Snowflake;
+	name: string;
+	order: number;
+	courseId: Snowflake;
+};
+
+export type APIPostChapterBody = {
+	name: string;
+	order: number;
+};
+
+export type APIPostChapterResult = APIChapter;
+
+export enum ContentType {
+	VIDEO = 0,
+	TEXT = 1,
+}
+
+export type APIContent = {
+	id: Snowflake;
+	name: string;
+	type: ContentType;
+	chapterId: Snowflake;
+};
+
+export type APIPostContentResult = APIContent;
+export type APIPostContentBody = {
+	name: string;
+	type: number;
+	chapterId: string;
+};
