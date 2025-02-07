@@ -37,6 +37,9 @@ export type APICourse = {
 	name: string;
 	imageUrl: string;
 	author: APIPublicUser;
+	description: string;
+	chapters: APIChapter[];
+	skills: { name: string }[];
 };
 
 export type APIPostCourseResult = APICourse;
@@ -52,6 +55,7 @@ export type APIChapter = {
 	name: string;
 	order: number;
 	courseId: Snowflake;
+	contents: APIContent[];
 };
 
 export type APIPostChapterBody = {

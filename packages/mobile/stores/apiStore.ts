@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { createStore, useStore } from "zustand";
 import { combine } from "zustand/middleware";
 
-const store = createStore(
+export const apiStore = createStore(
 	combine(
 		{
 			accessToken: null as string | null,
@@ -34,5 +34,5 @@ const store = createStore(
 );
 
 export function useApi() {
-	return useStore(store);
+	return useStore(apiStore);
 }

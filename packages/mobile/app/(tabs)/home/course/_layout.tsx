@@ -1,9 +1,9 @@
 import Monicon from "@monicon/native";
 import { Tabs, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 
 export default function TabLayout() {
-	const { id } = useLocalSearchParams();
+	const params = useLocalSearchParams<{ id: string }>();
 	const router = useRouter();
 	return (
 		<View className="h-full bg-gray-200 pt-10">
@@ -13,7 +13,6 @@ export default function TabLayout() {
 				</Pressable>
 				<View className="h-full w-full bg-slate-700" />
 			</View>
-			{/* <SafeAreaView> */}
 			<Tabs
 				screenOptions={{
 					tabBarActiveTintColor: "#f43f5e",
@@ -28,27 +27,24 @@ export default function TabLayout() {
 						height: 30,
 					},
 					tabBarLabelStyle: { fontSize: 15 },
+					headerShown: false,
 				}}
 			>
 				<Tabs.Screen
 					name="index"
 					options={{
-						title: "Overview",
-						headerShown: false,
-						// tabBarIcon: (props) => <Monicon name="mingcute:home-3-fill" size={props.size} color={props.color} />,
+						title: "Übersicht",
 					}}
 				/>
 
 				<Tabs.Screen
 					name="lessons"
 					options={{
-						title: "Lessons",
-						headerShown: false,
-						// tabBarIcon: (props) => <Monicon name="mingcute:user-2-fill" size={props.size} color={props.color} />,
+						title: "Lektionen",
 					}}
+					initialParams={params}
 				/>
 			</Tabs>
-			{/* </SafeAreaView> */}
 		</View>
 	);
 }

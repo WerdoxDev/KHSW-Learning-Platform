@@ -1,24 +1,15 @@
 import Course from "@/components/Course";
 import { useApi } from "@/stores/apiStore";
-import { authHeader, makeUrl } from "@/utils/utils";
-import type { APIGetCoursesResult } from "@khsw-learning-platform/shared";
+import { coursesOptions } from "@/utils/queries";
 import Monicon from "@monicon/native";
 import { useQuery } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
-import { fetch } from "expo/fetch";
 import { DevSettings, FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 export default function Home() {
 	const api = useApi();
 
-	const { data, isLoading } = useQuery({
-		queryKey: ["courses"],
-		queryFn: async () => {
-			if (!api.accessToken) return null;
-
-			return (await (await fetch(makeUrl("/courses"), { method: "GET", headers: authHeader(api.accessToken) })).json()) as APIGetCoursesResult;
-		},
-	});
+	const { data, isLoading } = useQuery(coursesOptions());
 
 	async function reset() {
 		await SecureStore.deleteItemAsync("accessToken");
