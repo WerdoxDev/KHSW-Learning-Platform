@@ -17,14 +17,13 @@ export const selectDefaultChapter = Prisma.validator<Prisma.ChapterSelect>()({
 	id: true,
 	name: true,
 	order: true,
-	courseId: true,
+	contents: { select: { id: true, name: true, type: true } },
 });
 
 export const selectDefaultContent = Prisma.validator<Prisma.ContentSelect>()({
 	id: true,
 	name: true,
 	type: true,
-	chapterId: true,
 });
 
 export const selectDefaultCourse = Prisma.validator<Prisma.CourseSelect>()({

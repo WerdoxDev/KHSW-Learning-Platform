@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
 	const user = idFix(await prisma.user.createUser(body.username, body.email, body.password));
 
-	const [accessToken, refreshToken] = await createTokens({ id: user.id });
+	const [accessToken, refreshToken] = await createTokens({ id: user.id, permissions: user.permissions });
 
 	const json: APIPostRegisterResult = { ...user, accessToken, refreshToken };
 	setResponseStatus(event, 201);

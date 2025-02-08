@@ -38,7 +38,8 @@ export async function useValidatedBody<T extends z.ZodTypeAny>(schema: T): Promi
 	}
 }
 
-export async function useValidatedParams<T extends z.ZodTypeAny>(event: H3Event, schema: T): Promise<z.infer<T>> {
+export async function useValidatedParams<T extends z.ZodTypeAny>(schema: T): Promise<z.infer<T>> {
+	const event = useEvent();
 	try {
 		const params = getRouterParams(event);
 		const parsedParams = await schema.parse(params);

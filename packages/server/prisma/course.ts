@@ -1,7 +1,7 @@
 import { type Snowflake, WorkerID, snowflake } from "@khsw-learning-platform/shared";
 import { Prisma } from "@prisma/client";
 import { prisma } from "./database";
-import { DBErrorType, assertObj } from "./error";
+import { DBErrorType, assertExists, assertObj } from "./error";
 
 export const courseExtension = Prisma.defineExtension({
 	model: {
@@ -35,6 +35,25 @@ export const courseExtension = Prisma.defineExtension({
 
 				assertObj("getAll", courses, DBErrorType.NULL_COURSE);
 				return courses as Prisma.CourseGetPayload<Args>[];
+			},
+			async getUserCourses<Args extends Prisma.CourseDefaultArgs>(userId: Snowflake, args?: Args) {
+				const courses = await prisma.course.findMany({ where: { students: { some: { id: BigInt(userId) } } }, ...args });
+
+				assertObj("getUserCourses", courses, DBErrorType.NULL_COURSE);
+				return courses as Prisma.CourseGetPayload<Args>[];
+			},
+			async enrollStudent(courseId: Snowflake, studentId: Snowflake) {
+				try {
+					const course = await prisma.course.update({
+						where: { id: BigInt(courseId) },
+						data: { students: { connect: { id: BigInt(studentId) } } },
+					});
+
+					assertObj("enrollStudent", course, DBErrorType.NULL_COURSE);
+					return course;
+				} catch (e) {
+					await assertExists(e, "enrollStudent", DBErrorType.NULL_COURSE, [courseId]);
+				}
 			},
 		},
 	},

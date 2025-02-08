@@ -14,23 +14,25 @@ datasource db {
 }
 
 model User {
-   id           BigInt   @id
-   username     String   @unique
-   email        String   @unique
-   password     String?
-   permissions  Int
-   ownedCourses Course[]
+   id              BigInt   @id
+   username        String   @unique
+   email           String   @unique
+   password        String?
+   permissions     Int
+   ownedCourses    Course[] @relation("ownedCourses")
+   enrolledCourses Course[] @relation("enrolledCourses")
 }
 
 model Course {
    id          BigInt    @id
    name        String    @unique
-   author      User      @relation(fields: [authorId], references: [id])
+   author      User      @relation(fields: [authorId], references: [id], name: "ownedCourses")
    authorId    BigInt
    imageUrl    String
    description String
    chapters    Chapter[]
    skills      Skill[]
+   students    User[]    @relation("enrolledCourses")
 }
 
 model Chapter {

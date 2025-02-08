@@ -49,12 +49,12 @@ export type APIPostCourseBody = {
 };
 
 export type APIGetCoursesResult = APICourse[];
+export type APIGetUserCoursesResult = APICourse[];
 
 export type APIChapter = {
 	id: Snowflake;
 	name: string;
 	order: number;
-	courseId: Snowflake;
 	contents: APIContent[];
 };
 
@@ -74,7 +74,6 @@ export type APIContent = {
 	id: Snowflake;
 	name: string;
 	type: ContentType;
-	chapterId: Snowflake;
 };
 
 export type APIPostContentResult = APIContent;
