@@ -14,6 +14,8 @@ export default function InfoModal() {
 		username_exists: "Benutzername existiert schon",
 		email_exists: "E-Mail Adresse existiert schon",
 		invalid_email: "Ungültige E-Mail Adresse",
+		unauthorized: "Nicht autorisiert",
+		course_name_exists: "Der Kursname existiert schon",
 	};
 
 	const bodyErrorMap: Record<ErrorKeys, string> = {
@@ -22,6 +24,8 @@ export default function InfoModal() {
 		username_exists: "Der eingegebene Benutzername existiert schon",
 		email_exists: "Die eingegebene E-Mail Adresse existiert schon",
 		invalid_email: "Die eingegebene E-Mail Adresse ist ungültig",
+		course_name_exists: "Der eingegebene Kursname existiert schon",
+		unauthorized: "Sie sind nicht autorisiert, diese Aktion auszuführen",
 	};
 
 	function getBodyFieldError() {

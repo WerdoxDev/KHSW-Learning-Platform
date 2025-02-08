@@ -27,6 +27,14 @@ export default function TabLayout() {
 					tabBarIcon: (props) => <Monicon name="mingcute:user-2-fill" size={props.size} color={props.color} />,
 				}}
 			/>
+			<Tabs.Screen
+				name="my-courses"
+				options={{
+					title: "Meine Kurse",
+					headerShown: false,
+					tabBarIcon: (props) => <Monicon name="mingcute:user-2-fill" size={props.size} color={props.color} />,
+				}}
+			/>
 		</Tabs>
 	);
 }

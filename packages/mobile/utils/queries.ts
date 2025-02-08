@@ -15,3 +15,15 @@ export function coursesOptions() {
 		},
 	});
 }
+
+export function myCoursesOptions() {
+	return queryOptions({
+		queryKey: ["my-courses"],
+		queryFn: async () => {
+			const accessToken = apiStore.getState().accessToken;
+			if (!accessToken) return null;
+
+			return (await (await fetch(makeUrl("/my-courses"), { method: "GET", headers: authHeader(accessToken) })).json()) as APIGetCoursesResult;
+		},
+	});
+}

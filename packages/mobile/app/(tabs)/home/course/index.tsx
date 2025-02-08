@@ -1,14 +1,29 @@
 import { useCourse } from "@/hooks/useCourse";
+import { useApi } from "@/stores/apiStore";
+import { makeUrl } from "@/utils/utils";
 import Monicon from "@monicon/native";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
+import { fetch } from "expo/fetch";
 import { useState } from "react";
 import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
 
 export default function CourseOverview() {
 	const { id } = useLocalSearchParams<{ id: string }>();
 	const course = useCourse(id);
+	const api = useApi();
 	const [readMore, setReadMore] = useState(false);
-	console.log(course);
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		async mutationFn() {
+			await fetch(makeUrl(`/courses/${id}/enroll`), { method: "POST", headers: { Authorization: `Bearer ${api.accessToken}` }, body: "" });
+			queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+		},
+		onError: (error) => {
+			console.error(error);
+		},
+	});
 
 	return (
 		<View className="h-full">
@@ -56,7 +71,7 @@ export default function CourseOverview() {
 						<Text className="text-white">Zertifikat</Text>
 					</View>
 				</View>
-				<Pressable className="mx-5 mt-5 rounded-xl bg-rose-500 p-5 active:opacity-50">
+				<Pressable onPress={() => mutation.mutate()} className="mx-5 mt-5 rounded-xl bg-rose-500 p-5 active:opacity-50">
 					<Text className="text-center text-white">Anmelden!</Text>
 				</Pressable>
 			</View>
