@@ -21,7 +21,7 @@ export const userExtension = Prisma.defineExtension({
 						AND: [
 							{ password: credentials.password },
 							{
-								OR: [{ email: credentials.email }, { username: credentials.username?.toLowerCase() }],
+								OR: [{ email: credentials.email }, { username: credentials.username }],
 							},
 						],
 					},
