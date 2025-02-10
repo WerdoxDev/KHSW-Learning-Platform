@@ -1,12 +1,13 @@
 import { useCourse } from "@/hooks/useCourse";
 import { useApi } from "@/stores/apiStore";
-import { makeUrl } from "@/utils/utils";
+import { authHeader, makeUrl } from "@/utils/utils";
 import Monicon from "@monicon/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
+import clsx from "clsx";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { fetch } from "expo/fetch";
 import { useState } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, View } from "react-native";
 
 export default function CourseOverview() {
 	const { id } = useLocalSearchParams<{ id: string }>();
@@ -14,14 +15,24 @@ export default function CourseOverview() {
 	const api = useApi();
 	const [readMore, setReadMore] = useState(false);
 	const queryClient = useQueryClient();
+	const { navigate } = useRouter();
 
 	const mutation = useMutation({
 		async mutationFn() {
-			await fetch(makeUrl(`/courses/${id}/enroll`), { method: "POST", headers: { Authorization: `Bearer ${api.accessToken}` }, body: "" });
-			queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+			if (course.enrolled) {
+				await fetch(makeUrl(`/courses/${id}/disenroll`), { method: "POST", headers: authHeader(api.accessToken ?? ""), body: "" });
+			} else {
+				await fetch(makeUrl(`/courses/${id}/enroll`), { method: "POST", headers: authHeader(api.accessToken ?? ""), body: "" });
+			}
 		},
 		onError: (error) => {
 			console.error(error);
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+			if (!course.enrolled) {
+				navigate("/my-courses");
+			}
 		},
 	});
 
@@ -31,7 +42,7 @@ export default function CourseOverview() {
 				<Text className="font-semibold text-2xl">{course?.name}</Text>
 				<View className="flex-row items-center gap-x-1">
 					<Text className="text-gray-500 text-lg">Von</Text>
-					<Text className="underline">{course?.author.username}</Text>
+					<Text className="underline">{course?.author?.username}</Text>
 					<Monicon name="mingcute:certificate-fill" size={16} color="#06b6d4" />
 				</View>
 				<View className="mt-2 flex-row items-center gap-x-2">
@@ -39,10 +50,10 @@ export default function CourseOverview() {
 					{/* <View> */}
 					<FlatList
 						scrollEnabled={false}
-						contentContainerClassName="w-max flex-row gap-x-2"
+						contentContainerClassName="w-max flex-row gap-x-2 flex-wrap gap-y-2"
 						data={course?.skills}
 						renderItem={({ item }) => (
-							<Text className="mb-px rounded-xl border border-rose-500 px-2 py-1 text-gray-700 italic">{item.name}</Text>
+							<Text className="mb-px rounded-full border border-rose-500 px-2 py-1 font-medium text-gray-600">{item.name}</Text>
 						)}
 					/>
 					{/* </View> */}
@@ -62,8 +73,8 @@ export default function CourseOverview() {
 					<View className="flex-row items-center gap-x-2">
 						<Monicon name="mingcute:book-2-fill" size={24} color="white" />
 						<Text className="text-white">
-							<Text className="font-bold">{course?.chapters.length}</Text> Kapiteln /{" "}
-							<Text className="font-bold">{course?.chapters.flatMap((x) => x.contents).length}</Text> Lektionen
+							<Text className="font-bold">{course?.chapters?.length}</Text> Kapiteln /{" "}
+							<Text className="font-bold">{course?.chapters?.flatMap((x) => x.contents).length}</Text> Lektionen
 						</Text>
 					</View>
 					<View className="ml-auto flex-row items-center gap-x-2">
@@ -71,8 +82,18 @@ export default function CourseOverview() {
 						<Text className="text-white">Zertifikat</Text>
 					</View>
 				</View>
-				<Pressable onPress={() => mutation.mutate()} className="mx-5 mt-5 rounded-xl bg-rose-500 p-5 active:opacity-50">
-					<Text className="text-center text-white">Anmelden!</Text>
+				<Pressable
+					onPress={() => mutation.mutate()}
+					className={clsx(
+						"mx-5 mt-5 items-center justify-center rounded-xl p-5 active:opacity-50",
+						course.enrolled ? "bg-rose-500" : "bg-emerald-500",
+					)}
+				>
+					{!mutation.isPending ? (
+						<Text className="text-center text-white">{course.enrolled ? "Abmelden" : "Anmelden!"}</Text>
+					) : (
+						<ActivityIndicator className="m-0 h-5 p-0" size="large" color="white" />
+					)}
 				</Pressable>
 			</View>
 		</View>

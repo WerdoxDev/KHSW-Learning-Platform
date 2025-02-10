@@ -22,9 +22,9 @@ export default function Home() {
 			<View className="mx-5 flex-row items-center">
 				<Text className="text-3xl">Willkommen, </Text>
 				<Text className="text-3xl text-rose-600">{api.user?.username}</Text>
-				<Pressable onPress={reset} className="ml-auto rounded-lg border border-gray-500 px-2 py-1">
+				{/* <Pressable onPress={reset} className="ml-auto rounded-lg border border-gray-500 px-2 py-1">
 					<Text>Test Reset</Text>
-				</Pressable>
+				</Pressable> */}
 			</View>
 			<View className="mx-10 my-5">
 				<View className="flex-row items-center rounded-3xl border border-gray-400 px-4 py-2">
@@ -32,7 +32,7 @@ export default function Home() {
 					<TextInput placeholder="Suche" placeholderClassName="#9ca3af" className="ml-2 w-full shrink text-lg leading-7" cursorColor="black" />
 				</View>
 			</View>
-			{isLoading && <Text className="mt-10 w-full text-center font-bold text-xl">Loading...</Text>}
+			{isLoading && <Text className="mt-10 w-full text-center font-bold text-xl">Laden...</Text>}
 			<View className="shrink">
 				<FlatList
 					contentContainerClassName="pb-10"

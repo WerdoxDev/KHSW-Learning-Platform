@@ -15,12 +15,12 @@ export default function MyCourses() {
 			<View className="mx-5 flex-row items-center">
 				<Text className="text-3xl">Meine Kurse</Text>
 			</View>
-			{isLoading && <Text className="mt-10 w-full text-center font-bold text-xl">Loading...</Text>}
+			{isLoading && <Text className="mt-10 w-full text-center font-bold text-xl">Laden...</Text>}
 			<View className="shrink">
 				<FlatList
 					contentContainerClassName="pb-10"
 					data={data}
-					renderItem={({ item }) => <Course id={item.id} name={item.name} imageUrl={item.imageUrl} author={item.author} />}
+					renderItem={({ item }) => <Course id={item.id} name={item.name} imageUrl={item.imageUrl} author={item.author} enrolled />}
 					keyExtractor={(item) => item.id}
 				/>
 			</View>

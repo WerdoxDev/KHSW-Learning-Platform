@@ -14,24 +14,21 @@ export default function TabLayout() {
 				name="home"
 				options={{
 					title: "Startseite",
-					headerShown: false,
 					tabBarIcon: (props) => <Monicon name="mingcute:home-3-fill" size={props.size} color={props.color} />,
 				}}
 			/>
 
 			<Tabs.Screen
-				name="profile"
-				options={{
-					title: "Konto",
-					headerShown: false,
-					tabBarIcon: (props) => <Monicon name="mingcute:user-2-fill" size={props.size} color={props.color} />,
-				}}
-			/>
-			<Tabs.Screen
 				name="my-courses"
 				options={{
 					title: "Meine Kurse",
-					headerShown: false,
+					tabBarIcon: (props) => <Monicon name="mingcute:black-board-2-fill" size={props.size} color={props.color} />,
+				}}
+			/>
+			<Tabs.Screen
+				name="profile"
+				options={{
+					title: "Konto",
 					tabBarIcon: (props) => <Monicon name="mingcute:user-2-fill" size={props.size} color={props.color} />,
 				}}
 			/>

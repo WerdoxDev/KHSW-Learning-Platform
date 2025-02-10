@@ -1,6 +1,6 @@
 import Monicon from "@monicon/native";
 import { Tabs, useLocalSearchParams, useRouter } from "expo-router";
-import { Pressable, View } from "react-native";
+import { Image, Pressable, View } from "react-native";
 
 export default function TabLayout() {
 	const params = useLocalSearchParams<{ id: string }>();
@@ -8,10 +8,12 @@ export default function TabLayout() {
 	return (
 		<View className="h-full bg-gray-200 pt-10">
 			<View className="h-60">
-				<Pressable className="absolute top-5 left-5 z-10" onPress={() => router.navigate("/(tabs)/home")}>
-					<Monicon name="mingcute:back-2-line" color="white" size={32} />
+				<Pressable className="absolute top-5 left-5 z-10 rounded-2xl bg-white p-1.5" onPress={() => router.navigate("/(tabs)/home")}>
+					<Monicon name="mingcute:back-2-line" color="black" size={32} />
 				</Pressable>
-				<View className="h-full w-full bg-slate-700" />
+				<View className="h-full w-full bg-slate-700">
+					<Image source={require("../../../../assets/images/course.jpg")} className="h-full w-full" />
+				</View>
 			</View>
 			<Tabs
 				screenOptions={{
