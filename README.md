@@ -27,6 +27,6 @@ bun run dev
 
 App:
 ```bash
-cd packages/app
+cd packages/mobile
 bun start
 ```
