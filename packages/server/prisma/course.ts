@@ -55,6 +55,19 @@ export const courseExtension = Prisma.defineExtension({
 					await assertExists(e, "enrollStudent", DBErrorType.NULL_COURSE, [courseId]);
 				}
 			},
+			async disenrollStudent(courseId: Snowflake, studentId: Snowflake) {
+				try {
+					const course = await prisma.course.update({
+						where: { id: BigInt(courseId) },
+						data: { students: { disconnect: { id: BigInt(studentId) } } },
+					});
+
+					assertObj("disenrollStudent", course, DBErrorType.NULL_COURSE);
+					return course;
+				} catch (e) {
+					await assertExists(e, "disenrollStudent", DBErrorType.NULL_COURSE, [courseId]);
+				}
+			},
 		},
 	},
 });
