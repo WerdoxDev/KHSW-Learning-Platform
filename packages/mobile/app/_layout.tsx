@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import InfoModal from "@/components/InfoModal";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useModals } from "@/stores/modalsStore";
+import { constants } from "@khsw-learning-platform/shared";
 import { Appearance, Platform } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

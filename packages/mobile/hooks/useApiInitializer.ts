@@ -2,7 +2,6 @@ import { useApi } from "@/stores/apiStore";
 import { authHeader, makeUrl } from "@/utils/utils";
 import type { APIPostLoginResult, APIPostRefreshTokenResult, APIPostRegisterResult } from "@khsw-learning-platform/shared";
 import { useMutation } from "@tanstack/react-query";
-import * as SecureStore from "expo-secure-store";
 import { fetch } from "expo/fetch";
 
 export function useApiInitializer() {
@@ -35,8 +34,7 @@ export function useApiInitializer() {
 	}
 
 	async function initializeWithToken() {
-		const accessToken = await SecureStore.getItemAsync("accessToken");
-		const refreshToken = await SecureStore.getItemAsync("refreshToken");
+		const { accessToken, refreshToken } = await api.getTokens();
 
 		if (refreshToken) {
 			const tokens = await refreshTokenMutation.mutateAsync({ refreshToken });

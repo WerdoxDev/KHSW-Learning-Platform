@@ -43,13 +43,13 @@ export default function Profile() {
 						</View>
 						<Text className="text-xl">Einstellungen</Text>
 					</View>
-					<View className="h-px w-full bg-black/10" />
+					{/* <View className="h-px w-full bg-black/10" />
 					<View className="w-full flex-row items-center gap-x-3">
 						<View className="rounded-xl bg-gray-100 p-2">
 							<Monicon name="mingcute:settings-3-line" size={28} color="#6b7280" />
 						</View>
 						<Text className="text-xl">Test</Text>
-					</View>
+					</View> */}
 				</View>
 				<Text className="ml-5 text-gray-500 text-lg">Konto</Text>
 				<View className="items-center justify-center gap-y-5 rounded-3xl border border-black/10 bg-gray-400/5 p-2">

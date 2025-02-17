@@ -5,9 +5,7 @@ const { withNativeWind } = require("nativewind/metro");
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
-config.resolver.blockList = [/@monicon\/runtime/].concat(
-	config.resolver.blockList,
-);
+config.resolver.blockList = [/@monicon\/runtime/].concat(config.resolver.blockList);
 
 const configWithMonicon = withMonicon(config, {
 	icons: ["flat-color-icons:google"],

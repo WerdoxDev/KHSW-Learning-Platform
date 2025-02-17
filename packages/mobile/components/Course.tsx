@@ -3,7 +3,16 @@ import Monicon from "@monicon/native";
 import { useRouter } from "expo-router";
 import { Image, Pressable, Text, View } from "react-native";
 
-export default function Course(props: { id: Snowflake; name: string; imageUrl: string; author: APIPublicUser; enrolled?: boolean }) {
+export default function Course(props: {
+	id: Snowflake;
+	name: string;
+	imageUrl: string;
+	author: APIPublicUser;
+	enrolled?: boolean;
+	admin?: boolean;
+	onDelete?: (id: Snowflake) => void;
+	onEdit?: (id: Snowflake) => void;
+}) {
 	const router = useRouter();
 
 	return (
@@ -22,6 +31,16 @@ export default function Course(props: { id: Snowflake; name: string; imageUrl: s
 					<View className="absolute right-5 bottom-5 flex-row items-center gap-x-1">
 						<Text className="text-emerald-500">Angemeldet</Text>
 						<Monicon name="mingcute:check-circle-fill" size={16} color="#10b981" />
+					</View>
+				)}
+				{props.admin && (
+					<View className="absolute right-2.5 bottom-2.5 flex-row items-center gap-x-2.5">
+						<Pressable onPress={() => props.onEdit?.(props.id)} className="rounded-2xl bg-emerald-100 p-2">
+							<Monicon name="mingcute:edit-2-fill" size={26} color="#10b981" />
+						</Pressable>
+						<Pressable onPress={(e) => props.onDelete?.(props.id)} className="rounded-2xl bg-rose-100 p-2">
+							<Monicon name="mingcute:delete-2-fill" size={26} color="#f43f5e" />
+						</Pressable>
 					</View>
 				)}
 			</View>

@@ -24,7 +24,7 @@ export default function BaseModal(props: { modalKey: "info"; children: ReactNode
 	return (
 		<Pressable className="absolute inset-0 justify-center bg-black/20" onPress={() => modals.setModal(props.modalKey, { isOpen: false })}>
 			<Pressable onPress={() => {}}>
-				<View className={clsx("mx-5 rounded-lg bg-white p-5 shadow-md", props.className)}>{props.children}</View>
+				<View className={clsx("mx-5 rounded-xl bg-white p-5 shadow-md", props.className)}>{props.children}</View>
 			</Pressable>
 		</Pressable>
 	);

@@ -1,9 +1,8 @@
 import Course from "@/components/Course";
 import { useApi } from "@/stores/apiStore";
 import { myCoursesOptions } from "@/utils/queries";
-import Monicon from "@monicon/native";
 import { useQuery } from "@tanstack/react-query";
-import { FlatList, Text, TextInput, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 
 export default function MyCourses() {
 	const api = useApi();

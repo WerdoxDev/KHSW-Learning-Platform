@@ -8,7 +8,7 @@ export default function CourseLessons() {
 	const course = useCourse(id);
 
 	return (
-		<View>
+		<View className="bg-gray-200">
 			<FlatList
 				data={course?.chapters}
 				keyExtractor={(item) => item.id}

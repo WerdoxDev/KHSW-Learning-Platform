@@ -11,12 +11,6 @@ export default function Home() {
 
 	const { data, isLoading } = useQuery(coursesOptions());
 
-	async function reset() {
-		await SecureStore.deleteItemAsync("accessToken");
-		await SecureStore.deleteItemAsync("refreshToken");
-		DevSettings.reload();
-	}
-
 	return (
 		<View className="h-full bg-gray-200 pt-16">
 			<View className="mx-5 flex-row items-center">

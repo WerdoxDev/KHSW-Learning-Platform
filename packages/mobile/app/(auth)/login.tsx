@@ -27,6 +27,8 @@ export default function Login() {
 				method: "POST",
 			});
 
+			console.log("OK");
+
 			return { result, json: await result.json() };
 		},
 		async onSuccess(data, variables, context) {
@@ -37,9 +39,13 @@ export default function Login() {
 			}
 
 			const result = data.json as APIPostLoginResult;
+			console.log("here");
 			await initializeWithResult(result);
 
 			router.navigate("/(tabs)/home");
+		},
+		onError(error, variables, context) {
+			console.error(error);
 		},
 	});
 

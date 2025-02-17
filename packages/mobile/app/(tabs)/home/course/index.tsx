@@ -37,7 +37,7 @@ export default function CourseOverview() {
 	});
 
 	return (
-		<View className="h-full">
+		<View className="h-full bg-gray-200">
 			<ScrollView contentContainerClassName="p-5">
 				<Text className="font-semibold text-2xl">{course?.name}</Text>
 				<View className="flex-row items-center gap-x-1">
