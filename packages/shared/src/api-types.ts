@@ -61,6 +61,7 @@ export type APIChapter = {
 export type APIPostChapterBody = {
 	name: string;
 	order: number;
+	contents: APIPostContentBody[];
 };
 
 export type APIPostChapterResult = APIChapter;
@@ -80,5 +81,4 @@ export type APIPostContentResult = APIContent;
 export type APIPostContentBody = {
 	name: string;
 	type: number;
-	chapterId: string;
 };
