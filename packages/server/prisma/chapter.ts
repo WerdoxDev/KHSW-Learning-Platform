@@ -6,18 +6,18 @@ import { DBErrorType, assertExists, assertObj } from "./error";
 export const chapterExtension = Prisma.defineExtension({
 	model: {
 		chapter: {
-			async createChapter<Args extends Prisma.ChapterDefaultArgs>(name: string, order: number, courseId: Snowflake, args?: Args) {
-				try {
-					const chapter = await prisma.chapter.create({
-						data: { id: snowflake.generate(WorkerID.CHAPTER), name: name, order: order, courseId: BigInt(courseId) },
-					});
+			async createChapter<Args extends Prisma.ChapterDefaultArgs>(name: string, order: number, contentIds: Snowflake[], args?: Args) {
+				const chapter = await prisma.chapter.create({
+					data: {
+						id: snowflake.generate(WorkerID.CHAPTER),
+						name: name,
+						order: order,
+						contents: { connect: contentIds.map((x) => ({ id: BigInt(x) })) },
+					},
+				});
 
-					assertObj("createChapter", chapter, DBErrorType.NULL_CHAPTER);
-					return chapter as Prisma.ChapterGetPayload<Args>;
-				} catch (e) {
-					await assertExists(e, "createChapter", DBErrorType.NULL_COURSE, [courseId]);
-					throw e;
-				}
+				assertObj("createChapter", chapter, DBErrorType.NULL_CHAPTER);
+				return chapter as Prisma.ChapterGetPayload<Args>;
 			},
 		},
 	},

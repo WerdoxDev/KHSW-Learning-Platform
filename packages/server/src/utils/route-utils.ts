@@ -26,7 +26,7 @@ export async function useValidatedBody<T extends z.ZodTypeAny>(schema: T): Promi
 	const event = useEvent();
 	try {
 		const body = await readBody(event);
-		const parsedBody = await schema.parse(body);
+		const parsedBody = await schema.parse(typeof body === "string" ? JSON.parse(body) : body);
 		return parsedBody;
 	} catch (e) {
 		if (e instanceof ZodError) {

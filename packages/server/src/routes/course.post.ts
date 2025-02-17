@@ -10,6 +10,9 @@ const schema = z.object({
 	imageUrl: z.string(),
 	description: z.string(),
 	skills: z.array(z.string()),
+	chapters: z.array(
+		z.object({ name: z.string(), order: z.number(), contents: z.array(z.object({ name: z.string(), chapterId: z.string(), type: z.number() })) }),
+	),
 });
 
 export default defineEventHandler(async (event) => {
@@ -23,7 +26,7 @@ export default defineEventHandler(async (event) => {
 	}
 
 	const course: APIPostCourseResult = idFix(
-		await prisma.course.createCourse(body.name, body.description, payload.id, body.imageUrl, body.skills, {
+		await prisma.course.createCourse(body.name, body.description, payload.id, body.imageUrl, body.skills, body.chapters, {
 			select: selectDefaultCourse,
 		}),
 	);

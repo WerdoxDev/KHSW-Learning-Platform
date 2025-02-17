@@ -39,17 +39,17 @@ model Chapter {
    id       BigInt    @id
    name     String
    order    Int
-   course   Course    @relation(fields: [courseId], references: [id])
-   courseId BigInt
+   course   Course?   @relation(fields: [courseId], references: [id])
+   courseId BigInt?
    contents Content[]
 }
 
 model Content {
-   id        BigInt  @id
+   id        BigInt   @id
    type      Int
    name      String
-   chapter   Chapter @relation(fields: [chapterId], references: [id])
-   chapterId BigInt
+   chapter   Chapter? @relation(fields: [chapterId], references: [id])
+   chapterId BigInt?
 }
 
 model Skill {

@@ -1,5 +1,5 @@
-import { type Snowflake, WorkerID, snowflake } from "@khsw-learning-platform/shared";
-import { Prisma } from "@prisma/client";
+import { type APIChapter, type APIPostChapterBody, type Snowflake, WorkerID, snowflake } from "@khsw-learning-platform/shared";
+import { type Chapter, type Content, Prisma } from "@prisma/client";
 import { prisma } from "./database";
 import { DBErrorType, assertExists, assertObj } from "./error";
 
@@ -12,8 +12,25 @@ export const courseExtension = Prisma.defineExtension({
 				authorId: Snowflake,
 				imageUrl: string,
 				skills: string[],
+				chapters: APIPostChapterBody[],
 				args?: Args,
 			) {
+				const createdChapters: Chapter[] = [];
+				for (const chapter of chapters) {
+					const createdContents: Content[] = [];
+					for (const content of chapter.contents) {
+						createdContents.push(await prisma.content.createContent(content.name, content.type));
+					}
+
+					createdChapters.push(
+						await prisma.chapter.createChapter(
+							chapter.name,
+							chapter.order,
+							createdContents.flatMap((x) => x.id.toString()),
+						),
+					);
+				}
+
 				const skillsConnect = skills.map((x) => ({ create: { id: snowflake.generate(WorkerID.SKILL), name: x }, where: { name: x } }));
 				const course = await prisma.course.create({
 					data: {
@@ -22,6 +39,7 @@ export const courseExtension = Prisma.defineExtension({
 						description: description,
 						authorId: BigInt(authorId),
 						imageUrl: imageUrl,
+						chapters: { connect: createdChapters.map((x) => ({ id: x.id })) },
 						skills: { connectOrCreate: skillsConnect },
 					},
 					...args,
