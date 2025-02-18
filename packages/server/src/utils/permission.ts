@@ -1,8 +1,8 @@
 export const permissions = {
 	DEFAULT: 1,
 	CREATE_COURSE: 2,
-	DELETE_COURSE: 3,
-	EDIT_COURSE: 4,
+	DELETE_COURSE: 4,
+	EDIT_COURSE: 8,
 } as const;
 
 Object.freeze(permissions);

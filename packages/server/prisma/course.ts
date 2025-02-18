@@ -60,6 +60,15 @@ export const courseExtension = Prisma.defineExtension({
 				assertObj("getUserCourses", courses, DBErrorType.NULL_COURSE);
 				return courses as Prisma.CourseGetPayload<Args>[];
 			},
+			async deleteById(courseId: Snowflake) {
+				try {
+					const course = await prisma.course.delete({ where: { id: BigInt(courseId) } });
+					assertObj("deleteById", course, DBErrorType.NULL_COURSE);
+					return course;
+				} catch (e) {
+					await assertExists(e, "deleteById", DBErrorType.NULL_COURSE, [courseId]);
+				}
+			},
 			async enrollStudent(courseId: Snowflake, studentId: Snowflake) {
 				try {
 					const course = await prisma.course.update({
