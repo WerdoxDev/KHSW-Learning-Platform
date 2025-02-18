@@ -1,3 +1,4 @@
+import { useApi } from "@/stores/apiStore";
 import type { APIPublicUser, Snowflake } from "@khsw-learning-platform/shared";
 import Monicon from "@monicon/native";
 import { useRouter } from "expo-router";
@@ -14,6 +15,7 @@ export default function Course(props: {
 	onEdit?: (id: Snowflake) => void;
 }) {
 	const router = useRouter();
+	const api = useApi();
 
 	return (
 		<Pressable className="mt-10" onPress={() => router.navigate({ pathname: "/(tabs)/home/course", params: { id: props.id } })}>
@@ -35,12 +37,16 @@ export default function Course(props: {
 				)}
 				{props.admin && (
 					<View className="absolute right-2.5 bottom-2.5 flex-row items-center gap-x-2.5">
-						<Pressable onPress={() => props.onEdit?.(props.id)} className="rounded-2xl bg-emerald-100 p-2">
-							<Monicon name="mingcute:edit-2-fill" size={26} color="#10b981" />
-						</Pressable>
-						<Pressable onPress={(e) => props.onDelete?.(props.id)} className="rounded-2xl bg-rose-100 p-2">
-							<Monicon name="mingcute:delete-2-fill" size={26} color="#f43f5e" />
-						</Pressable>
+						{!!((api.user?.permissions ?? 0) & 4) && (
+							<Pressable onPress={() => props.onEdit?.(props.id)} className="rounded-2xl bg-emerald-100 p-2">
+								<Monicon name="mingcute:edit-2-fill" size={26} color="#10b981" />
+							</Pressable>
+						)}
+						{!!((api.user?.permissions ?? 0) & 3) && (
+							<Pressable onPress={() => props.onDelete?.(props.id)} className="rounded-2xl bg-rose-100 p-2">
+								<Monicon name="mingcute:delete-2-fill" size={26} color="#f43f5e" />
+							</Pressable>
+						)}
 					</View>
 				)}
 			</View>
