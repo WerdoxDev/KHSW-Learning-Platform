@@ -8,9 +8,9 @@ export default function CourseLessons() {
 	const course = useCourse(id);
 
 	return (
-		<View className="bg-gray-200">
+		<View className="h-full bg-gray-200">
 			<FlatList
-				data={course?.chapters}
+				data={course?.chapters?.toSorted((a, b) => a.order - b.order)}
 				keyExtractor={(item) => item.id}
 				contentContainerClassName="gap-y-5 p-5"
 				renderItem={({ item }) => <Chapter chapter={item} />}

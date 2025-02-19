@@ -19,6 +19,12 @@ export default function Index() {
 			await SplashScreen.hideAsync();
 		}
 
+		if (!Array.prototype.toSorted) {
+			Array.prototype.toSorted = function (compareFn) {
+				return [...this].sort(compareFn);
+			};
+		}
+
 		initialize();
 	}, []);
 

@@ -18,7 +18,12 @@ export default function Course(props: {
 	const api = useApi();
 
 	return (
-		<Pressable className="mt-10" onPress={() => router.navigate({ pathname: "/(tabs)/home/course", params: { id: props.id } })}>
+		<Pressable
+			className="mt-10"
+			onPress={() =>
+				router.navigate({ pathname: props.admin ? "/(tabs)/admin-panel/edit-course" : "/(tabs)/home/course", params: { id: props.id } })
+			}
+		>
 			<View className="mx-5 rounded-3xl bg-white p-2 pb-0 shadow-2xl">
 				<View className="h-48 w-full overflow-hidden rounded-2xl">
 					<Image source={require("../assets/images/course.jpg")} className="h-full w-full" />

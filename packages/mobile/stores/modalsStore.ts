@@ -7,7 +7,7 @@ const store = createStore(
 		{
 			info: {
 				isOpen: false,
-				type: "info" as "info" | "error",
+				type: "info" as "info" | "error" | "none",
 				title: "" as string,
 				body: {} as ReactNode,
 			},

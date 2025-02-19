@@ -43,11 +43,13 @@ export default function InfoModal() {
 
 	return (
 		<BaseModal modalKey="info" className="items-center">
-			<Monicon
-				name={modal.type === "error" ? "mingcute:alert-fill" : "mingcute:warning-fill"}
-				color={modal.type === "error" ? "#f43f5e" : "#f97316"}
-				size={64}
-			/>
+			{modal.type !== "none" && (
+				<Monicon
+					name={modal.type === "error" ? "mingcute:alert-fill" : "mingcute:warning-fill"}
+					color={modal.type === "error" ? "#f43f5e" : "#f97316"}
+					size={64}
+				/>
+			)}
 			<Text className="mt-2 font-bold text-2xl">{modal.type === "error" ? titleErrorMap[modal.title as ErrorKeys] : modal.title}</Text>
 			{modal.type === "error" ? (
 				<Text className="mt-4 text-center text-lg">{getBodyFieldError() ?? bodyErrorMap[modal.title as ErrorKeys]}</Text>
