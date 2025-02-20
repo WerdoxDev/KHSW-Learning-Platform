@@ -43,9 +43,16 @@ export type APICourse = {
 };
 
 export type APIPostCourseResult = APICourse;
+export type APIPatchCourseResult = APICourse;
 export type APIPostCourseBody = {
 	name: string;
 	imageUrl: string;
+};
+
+export type APIPatchCourseBody = {
+	name: string;
+	description: string;
+	chapters: APIPostChapterBody[];
 };
 
 export type APIGetCoursesResult = APICourse[];
