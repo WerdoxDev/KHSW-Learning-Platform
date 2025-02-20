@@ -67,6 +67,44 @@ export const courseExtension = Prisma.defineExtension({
 					return course;
 				} catch (e) {
 					await assertExists(e, "deleteById", DBErrorType.NULL_COURSE, [courseId]);
+					throw e;
+				}
+			},
+			async editById<Args extends Prisma.CourseDefaultArgs>(
+				courseId: Snowflake,
+				name: string,
+				description: string,
+				chapters: APIPostChapterBody[],
+				args?: Args,
+			) {
+				try {
+					const createdChapters: Chapter[] = [];
+					for (const chapter of chapters) {
+						const createdContents: Content[] = [];
+						for (const content of chapter.contents) {
+							createdContents.push(await prisma.content.createContent(content.name, content.type));
+						}
+
+						createdChapters.push(
+							await prisma.chapter.createChapter(
+								chapter.name,
+								chapter.order,
+								createdContents.flatMap((x) => x.id.toString()),
+							),
+						);
+					}
+
+					const course = await prisma.course.update({
+						where: { id: BigInt(courseId) },
+						data: { name: name, description: description, chapters: { set: createdChapters.map((x) => ({ id: x.id })) } },
+						...args,
+					});
+
+					assertObj("editById", course, DBErrorType.NULL_COURSE);
+					return course as Prisma.CourseGetPayload<Args>;
+				} catch (e) {
+					await assertExists(e, "editById", DBErrorType.NULL_COURSE, [courseId]);
+					throw e;
 				}
 			},
 			async enrollStudent(courseId: Snowflake, studentId: Snowflake) {

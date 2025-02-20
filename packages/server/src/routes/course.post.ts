@@ -10,9 +10,7 @@ const schema = z.object({
 	imageUrl: z.string(),
 	description: z.string(),
 	skills: z.array(z.string()),
-	chapters: z.array(
-		z.object({ name: z.string(), order: z.number(), contents: z.array(z.object({ name: z.string(), chapterId: z.string(), type: z.number() })) }),
-	),
+	chapters: z.array(z.object({ name: z.string(), order: z.number(), contents: z.array(z.object({ name: z.string(), type: z.number() })) })),
 });
 
 export default defineEventHandler(async (event) => {
