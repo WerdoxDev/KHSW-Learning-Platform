@@ -2,12 +2,14 @@ import Chapter from "@/components/Chapter";
 import { useCourse } from "@/hooks/useCourse";
 import { useApi } from "@/stores/apiStore";
 import { useModals } from "@/stores/modalsStore";
-import { ContentType, type Snowflake } from "@khsw-learning-platform/shared";
+import { authHeader, makeUrl } from "@/utils/utils";
+import type { APIPatchCourseBody, Snowflake } from "@khsw-learning-platform/shared";
 import Monicon from "@monicon/native";
 import { Picker } from "@react-native-picker/picker";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { fetch } from "expo/fetch";
+import { useRef, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
 export default function EditCourse() {
@@ -15,6 +17,7 @@ export default function EditCourse() {
 	const course = useCourse(id);
 	const api = useApi();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const modals = useModals();
 
 	const [edited, setEdited] = useState({ ...course });
@@ -22,12 +25,31 @@ export default function EditCourse() {
 	const nameInputRef = useRef<TextInput | null>(null);
 	const descriptionInputRef = useRef<TextInput | null>(null);
 
-	const [courseName, setCourseName] = useState("");
-	const [description, setDescription] = useState("");
-	const newCapitalName = useRef("");
-	const newCapitalType = useRef("");
+	const [courseName, setCourseName] = useState(course.name);
+	const [courseDescription, setCourseDescription] = useState(course.description);
+	const contentName = useRef("");
+	const contentType = useRef("");
+	const chapterName = useRef("");
 
-	const mutation = useMutation({});
+	const mutation = useMutation({
+		async mutationFn(data: APIPatchCourseBody) {
+			const result = await fetch(makeUrl(`/courses/${course.id}`), {
+				method: "PATCH",
+				body: JSON.stringify({ name: data.name, description: data.description, chapters: data.chapters }),
+				headers: authHeader(api.accessToken ?? ""),
+			});
+
+			console.log(await result.json());
+		},
+		onError(error, variables, context) {
+			console.error(error);
+		},
+		onSuccess(data, variables, context) {
+			console.log("OK!", data);
+			queryClient.invalidateQueries({ queryKey: ["courses"] });
+			router.navigate("/(tabs)/admin-panel");
+		},
+	});
 
 	function deleteChapter(id: Snowflake) {
 		console.log("hi");
@@ -56,11 +78,29 @@ export default function EditCourse() {
 		setEdited({ ...edited, chapters: edited.chapters ? [...edited.chapters.filter((x) => x.id !== chapter.id), chapter] : [chapter] });
 	}
 
-	useEffect(() => {
-		console.log(newCapitalName);
-	}, [newCapitalName]);
+	function editContent(id: Snowflake) {
+		modals.setModal("info", { isOpen: false });
+		if (!edited.chapters) {
+			return;
+		}
 
-	function addChapter(id: Snowflake) {
+		const chapters = [...edited.chapters];
+		const chapter = chapters.find((x) => x.contents.some((x) => x.id === id));
+		if (!chapter) {
+			return;
+		}
+
+		const content = chapter.contents.find((x) => x.id === id);
+		if (!content) {
+			return;
+		}
+
+		content.name = contentName.current;
+		content.type = contentType.current === "video" ? 0 : 1;
+
+		setEdited({ ...edited, chapters: [...edited.chapters.filter((x) => x.id !== chapter.id), chapter] });
+	}
+	function addContent(id: Snowflake) {
 		modals.setModal("info", { isOpen: false });
 		if (!edited.chapters) {
 			return;
@@ -74,13 +114,46 @@ export default function EditCourse() {
 
 		const newContent = {
 			id: Math.floor(Math.random() * 1000000).toString(),
-			name: newCapitalName.current,
-			type: newCapitalType.current === "video" ? 0 : 1,
+			name: contentName.current,
+			type: contentType.current === "video" ? 0 : 1,
 		};
 
 		chapter.contents?.push(newContent);
 
-		setEdited({ ...edited, chapters: edited.chapters ? [...edited.chapters.filter((x) => x.id !== chapter.id), chapter] : [chapter] });
+		setEdited({ ...edited, chapters: [...edited.chapters.filter((x) => x.id !== chapter.id), chapter] });
+	}
+
+	function addChapter() {
+		modals.setModal("info", { isOpen: false });
+		if (!edited.chapters) {
+			return;
+		}
+
+		const newChapter = {
+			id: Math.floor(Math.random() * 1000000).toString(),
+			name: chapterName.current,
+			order: edited.chapters.length + 1,
+			contents: [],
+		};
+
+		setEdited({ ...edited, chapters: [...edited.chapters, newChapter] });
+	}
+
+	function editChapter(id: Snowflake) {
+		modals.setModal("info", { isOpen: false });
+		if (!edited.chapters) {
+			return;
+		}
+
+		const chapters = [...edited.chapters];
+		const chapter = chapters.find((x) => x.id === id);
+		if (!chapter) {
+			return;
+		}
+
+		chapter.name = chapterName.current;
+
+		setEdited({ ...edited, chapters: [...edited.chapters.filter((x) => x.id !== chapter.id), chapter] });
 	}
 
 	return (
@@ -111,13 +184,51 @@ export default function EditCourse() {
 					className="mt-1 w-full rounded-xl bg-white p-5"
 					multiline
 					defaultValue={edited.description}
-					onChangeText={(text) => setDescription(text)}
+					onChangeText={(text) => setCourseDescription(text)}
 				/>
 				<View className="mt-5 w-full flex-row items-center">
 					<Text className="ml-2 font-semibold">Inhalt:</Text>
-					<View className="ml-auto">
+					<Pressable
+						className="ml-auto"
+						onPress={() => {
+							chapterName.current = "";
+							modals.setModal("info", {
+								isOpen: true,
+								title: "Neues Kapitel",
+								type: "none",
+								body: (
+									<View className="mt-4 w-full">
+										<TextInput
+											submitBehavior="newline"
+											returnKeyType="next"
+											placeholder="Name"
+											className="mt-1 w-full bg-gray-200 p-5"
+											defaultValue={chapterName.current}
+											onChangeText={(text) => {
+												chapterName.current = text;
+											}}
+										/>
+										<View className="mt-4 flex w-full flex-row gap-x-2">
+											<Pressable
+												onPress={() => modals.setModal("info", { isOpen: false })}
+												className="w-full shrink rounded-lg bg-gray-700 px-5 py-2.5 active:opacity-50"
+											>
+												<Text className="text-center text-lg text-white">Abbrechen</Text>
+											</Pressable>
+											<Pressable
+												onPress={() => addChapter()}
+												className="w-full shrink rounded-lg bg-emerald-500 px-5 py-2.5 active:opacity-50"
+											>
+												<Text className="text-center text-lg text-white">Speichern</Text>
+											</Pressable>
+										</View>
+									</View>
+								),
+							});
+						}}
+					>
 						<Monicon name="mingcute:add-circle-fill" size={40} color="#10b981" />
-					</View>
+					</Pressable>
 				</View>
 				<FlatList
 					scrollEnabled={false}
@@ -128,9 +239,95 @@ export default function EditCourse() {
 						<Chapter
 							chapter={item}
 							admin
+							onEdit={(id) => {
+								chapterName.current = item.name;
+								modals.setModal("info", {
+									isOpen: true,
+									title: "Kapitel bearbeiten",
+									type: "none",
+									body: (
+										<View className="mt-4 w-full">
+											<TextInput
+												submitBehavior="newline"
+												returnKeyType="next"
+												placeholder="Name"
+												className="mt-1 w-full bg-gray-200 p-5"
+												defaultValue={chapterName.current}
+												// onSubmitEditing={() => passwordInputRef.current?.focus()}
+												onChangeText={(text) => {
+													chapterName.current = text;
+												}}
+											/>
+											<View className="mt-4 flex w-full flex-row gap-x-2">
+												<Pressable
+													onPress={() => modals.setModal("info", { isOpen: false })}
+													className="w-full shrink rounded-lg bg-gray-700 px-5 py-2.5 active:opacity-50"
+												>
+													<Text className="text-center text-lg text-white">Abbrechen</Text>
+												</Pressable>
+												<Pressable
+													onPress={() => editChapter(id)}
+													className="w-full shrink rounded-lg bg-emerald-500 px-5 py-2.5 active:opacity-50"
+												>
+													<Text className="text-center text-lg text-white">Speichern</Text>
+												</Pressable>
+											</View>
+										</View>
+									),
+								});
+							}}
+							onContentEdit={(content) => {
+								contentName.current = content.name;
+								contentType.current = content.type === 0 ? "video" : "text";
+
+								modals.setModal("info", {
+									isOpen: true,
+									title: "Lektion bearbeiten",
+									type: "none",
+									body: (
+										<View className="mt-4 w-full">
+											<TextInput
+												submitBehavior="newline"
+												returnKeyType="next"
+												placeholder="Name"
+												className="mt-1 w-full bg-gray-200 p-5"
+												defaultValue={contentName.current}
+												// onSubmitEditing={() => passwordInputRef.current?.focus()}
+												onChangeText={(text) => {
+													contentName.current = text;
+												}}
+											/>
+											<Picker
+												onValueChange={(val: string) => {
+													contentType.current = val;
+												}}
+												selectedValue={contentType.current}
+												style={{ backgroundColor: "#e5e7eb", marginTop: 10 }}
+											>
+												<Picker.Item label="Text" value="text" />
+												<Picker.Item label="Video" value="video" />
+											</Picker>
+											<View className="mt-4 flex w-full flex-row gap-x-2">
+												<Pressable
+													onPress={() => modals.setModal("info", { isOpen: false })}
+													className="w-full shrink rounded-lg bg-gray-700 px-5 py-2.5 active:opacity-50"
+												>
+													<Text className="text-center text-lg text-white">Abbrechen</Text>
+												</Pressable>
+												<Pressable
+													onPress={() => editContent(content.id)}
+													className="w-full shrink rounded-lg bg-emerald-500 px-5 py-2.5 active:opacity-50"
+												>
+													<Text className="text-center text-lg text-white">Speichern</Text>
+												</Pressable>
+											</View>
+										</View>
+									),
+								});
+							}}
 							onContentAdd={(id) => {
-								newCapitalName.current = "";
-								newCapitalType.current = "text";
+								contentName.current = "";
+								contentType.current = "text";
 
 								modals.setModal("info", {
 									isOpen: true,
@@ -139,7 +336,6 @@ export default function EditCourse() {
 									body: (
 										<View className="mt-4 w-full">
 											<TextInput
-												ref={descriptionInputRef}
 												submitBehavior="newline"
 												returnKeyType="next"
 												placeholder="Name"
@@ -147,12 +343,12 @@ export default function EditCourse() {
 												defaultValue=""
 												// onSubmitEditing={() => passwordInputRef.current?.focus()}
 												onChangeText={(text) => {
-													newCapitalName.current = text;
+													contentName.current = text;
 												}}
 											/>
 											<Picker
 												onValueChange={(val: string) => {
-													newCapitalType.current = val;
+													contentType.current = val;
 												}}
 												style={{ backgroundColor: "#e5e7eb", marginTop: 10 }}
 											>
@@ -167,7 +363,7 @@ export default function EditCourse() {
 													<Text className="text-center text-lg text-white">Abbrechen</Text>
 												</Pressable>
 												<Pressable
-													onPress={() => addChapter(item.id)}
+													onPress={() => addContent(id)}
 													className="w-full shrink rounded-lg bg-emerald-500 px-5 py-2.5 active:opacity-50"
 												>
 													<Text className="text-center text-lg text-white">Speichern</Text>
@@ -239,7 +435,10 @@ export default function EditCourse() {
 			</ScrollView>
 			{/* <View className="w-full h-10 bg-black" style={{}}></View> */}
 			<Pressable
-				onPress={() => mutation.mutate()}
+				onPress={() =>
+					// biome-ignore lint/style/noNonNullAssertion: <explanation>
+					mutation.mutate({ name: courseName!, description: courseDescription!, chapters: edited.chapters! })
+				}
 				className="mx-5 mb-5 items-center justify-center rounded-xl bg-emerald-500 p-5 active:opacity-50"
 			>
 				{!mutation.isPending ? (
